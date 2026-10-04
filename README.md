@@ -167,3 +167,4 @@ python manage.py create_batch_sample_applicants
 For the complete Project-VI academic report containing theoretical formulations, baseline comparison methodology, algorithm pseudocode, and ethical considerations, refer to:
 [ACADEMIC_ML_REPORT.md](ACADEMIC_ML_REPORT.md)
 
+# AI_BASED_RESUME_SCREENING
