@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Applicants for {{ job.title }} | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Admin Subnav -->
+  {% include 'components/admin_subnav.html' with active_admin_tab='applicants' %}
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'jobs:manage_jobs' %}">Jobs</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ job.title|truncatechars:30 }} Applicants</li>
+    </ol>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="gk-badge gk-badge-danger">Administrator Access</span>
+        <span class="text-muted small">Candidate Review Portal</span>
+      </div>
+      <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Applicants: {{ job.title }}</h2>
+      <div class="text-secondary small">
+        <span class="gk-badge gk-badge-primary me-2">{{ job.department }}</span>
+        <span>Deadline: {{ job.deadline|date:"M d, Y" }} &bull; Location: {{ job.location }}</span>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-secondary">
+        <i class="bi bi-briefcase"></i> All Jobs
+      </a>
+      <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-outline-primary">
+        <i class="bi bi-eye"></i> View Job Specs
+      </a>
+    </div>
+  </div>
+
+  <!-- Applicants Table -->
+  <div class="gk-card bg-white shadow-sm">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-people-fill text-primary me-1"></i> Submitted Candidate Resumes
+      </span>
+      <span class="badge bg-primary fs-6">{{ total_count }} Applicant{{ total_count|pluralize }}</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 25%;">Candidate</th>
+            <th scope="col">Email</th>
+            <th scope="col">Applied Date</th>
+            <th scope="col">CV Document</th>
+            <th scope="col">Status</th>
+            <th scope="col">AI Analysis</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in applicants %}
+            <tr>
+              <td>
+                <div class="fw-bold text-dark">
+                  {{ app.applicant.get_full_name|default:app.applicant.username }}
+                </div>
+                <div class="small text-muted">@{{ app.applicant.username }}</div>
+              </td>
+              <td class="small">{{ app.applicant.email }}</td>
+              <td class="small">
+                <div>{{ app.applied_at|date:"M d, Y" }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ app.applied_at|date:"g:i A" }}</div>
+              </td>
+              <td>
+                {% if app.cv %}
+                  <a href="{{ app.cv.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                    <i class="bi bi-file-earmark-pdf text-danger"></i> PDF CV
+                  </a>
+                {% else %}
+                  <span class="text-muted small">None</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" action="{% url 'applications:update_status' app.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="min-width: 130px;">
+                    {% for code, label in app.STATUS_CHOICES %}
+                      <option value="{{ code }}" {% if app.status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </form>
+              </td>
+              <td>
+                {% if app.resume_analysis %}
+                  <a href="{% url 'resume_ai:analyze_resume' app.pk %}" class="text-decoration-none">
+                    <span class="gk-badge {{ app.resume_analysis.badge_class }} d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-robot"></i> {{ app.resume_analysis.match_percentage }}% Match
+                    </span>
+                    <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+                      <span class="text-success fw-bold">{{ app.resume_analysis.matched_skills|length }}</span>/{{ app.resume_analysis.matched_skills|length|add:app.resume_analysis.missing_skills|length }} skills
+                    </div>
+                  </a>
+                {% elif app.resume_screening %}
+                  <a href="{% url 'resume_ai:analyze_resume' app.pk %}" class="text-decoration-none">
+                    <span class="gk-badge {{ app.resume_screening.badge_class }} d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-robot"></i> {{ app.resume_screening.match_percentage }}% Match
+                    </span>
+                  </a>
+                {% else %}
+                  <a href="{% url 'resume_ai:analyze_resume' app.pk %}" class="btn btn-sm btn-primary text-nowrap" title="Run Full AI Resume Analysis">
+                    <i class="bi bi-cpu me-1"></i> Analyze CV
+                  </a>
+                {% endif %}
+              </td>
+              <td class="text-end text-nowrap">
+                <a href="{% url 'resume_ai:analyze_resume' app.pk %}" class="btn btn-sm btn-outline-primary me-1" title="View Full AI Analysis Report">
+                  <i class="bi bi-cpu"></i> Analyze CV
+                </a>
+                <a href="{% url 'applications:view_application' app.pk %}" class="btn btn-sm btn-primary">
+                  <i class="bi bi-card-text"></i> Details
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="py-5">
+                <div class="gk-empty-state">
+                  <div class="gk-empty-state-icon"><i class="bi bi-people"></i></div>
+                  <div class="gk-empty-state-title">No Applications Received Yet</div>
+                  <div class="gk-empty-state-text">
+                    There are currently no candidates who have submitted their resume for this job opening.
+                  </div>
+                  <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye"></i> View Position Requirements
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

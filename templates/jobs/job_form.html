@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action_title }} | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Admin Subnav -->
+  {% include 'components/admin_subnav.html' with active_admin_tab='jobs' %}
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'jobs:manage_jobs' %}">Jobs</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ action_title }}</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Page Title & Quick Back -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">{{ action_title }}</h2>
+          <p class="text-secondary small mb-0">Specify role expectations, required skills, and candidate eligibility</p>
+        </div>
+        <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Cancel &amp; Back
+        </a>
+      </div>
+
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm">
+        <form method="POST" data-loading-form novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 mb-4">
+              {% for error in form.non_field_errors %}
+                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- GROUP 1: ROLE OVERVIEW -->
+          <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+              <span class="badge bg-primary me-2">1</span> Role Overview &amp; Department
+            </h5>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="jobTitle" class="form-label">Job Title <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.title.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-4">
+                <label for="jobDepartment" class="form-label">Department / Program <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.department }}
+                {% if form.department.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.department.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-4">
+                <label for="jobType" class="form-label">Job Type <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.job_type }}
+                {% if form.job_type.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.job_type.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-4">
+                <label for="jobLocation" class="form-label">Work Location <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.location.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- GROUP 2: CANDIDATE ELIGIBILITY & TIMELINE -->
+          <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+              <span class="badge bg-primary me-2">2</span> Candidate Eligibility &amp; Timeline
+            </h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="jobQualification" class="form-label">Minimum Qualification <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.qualification }}
+                {% if form.qualification.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.qualification.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="jobExperience" class="form-label">Required Experience <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.experience }}
+                {% if form.experience.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.experience.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="jobDeadline" class="form-label">Application Deadline <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.deadline }}
+                {% if form.deadline.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.deadline.errors %}{{ e }}{% endfor %}</div>
+                {% else %}
+                  <div class="form-text">After this calendar date, the position automatically shifts to EXPIRED status.</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- GROUP 3: AI SCREENING CRITERIA & DESCRIPTION -->
+          <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+              <span class="badge bg-primary me-2">3</span> AI Matching Dictionary &amp; Responsibilities
+            </h5>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="jobSkills" class="form-label">Required Skills &amp; Competencies <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.required_skills }}
+                {% if form.required_skills.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.required_skills.errors %}{{ e }}{% endfor %}</div>
+                {% else %}
+                  <div class="form-text">
+                    <i class="bi bi-info-circle me-1 text-primary"></i> Separate skill terms by commas (e.g. <em>Loksewa GK, Current Affairs, Public Governance</em>). These terms are parsed directly into the TF-IDF feature space for semantic scoring.
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="col-12">
+                <label for="jobDescription" class="form-label">Job Description &amp; Responsibilities <span class="required-indicator" aria-hidden="true">*</span></label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                  <div class="text-danger small mt-1">{% for e in form.description.errors %}{{ e }}{% endfor %}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Submit Actions -->
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-secondary">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="bi bi-check2-circle"></i> Save Job Position
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | GURUKUL Academic Platform{% endblock %}
+{% block meta_description %}Log in to your GURUKUL account to access the Job Seeker or Administrator dashboard.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5 col-xl-4">
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm border-top border-4 border-primary">
+        <div class="text-center mb-4">
+          <div class="gk-brand-logo mx-auto mb-3" style="width: 44px; height: 44px; font-size: 1.3rem;">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </div>
+          <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Welcome Back</h2>
+          <p class="text-secondary small mb-0">Sign in to your GURUKUL account</p>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" data-loading-form novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 mb-3">
+              {% for error in form.non_field_errors %}
+                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Username or Email -->
+          <div class="mb-3">
+            <label for="loginIdentifier" class="form-label">Username or Email <span class="required-indicator" aria-hidden="true">*</span></label>
+            {{ form.username_or_email }}
+            {% if form.username_or_email.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.username_or_email.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password with Toggle -->
+          <div class="mb-4">
+            <label for="loginPassword" class="form-label">Password <span class="required-indicator" aria-hidden="true">*</span></label>
+            <div class="input-group">
+              {{ form.password }}
+              <button class="btn btn-outline-secondary" type="button" data-password-toggle="loginPassword" aria-label="Toggle password visibility">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+            </div>
+            {% if form.password.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.password.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </button>
+          </div>
+        </form>
+
+        <div class="p-3 bg-light rounded-2 border mb-4 small text-secondary">
+          <div class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock me-1 text-primary"></i> Role-Based Redirection:</div>
+          <div>&bull; <strong>Job Seekers</strong> &rarr; Candidate Dashboard</div>
+          <div>&bull; <strong>Administrators</strong> &rarr; Admin Evaluation Portal</div>
+        </div>
+
+        <div class="text-center pt-3 border-top small text-secondary">
+          Don't have an account yet?
+          <a href="{% url 'accounts:register' %}" class="fw-bold ms-1 text-primary">Register as Job Seeker</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

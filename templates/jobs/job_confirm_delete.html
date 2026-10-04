@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete Job | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Admin Subnav -->
+  {% include 'components/admin_subnav.html' with active_admin_tab='jobs' %}
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'jobs:manage_jobs' %}">Jobs</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Delete {{ job.title|truncatechars:25 }}</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="gk-card bg-white shadow-sm border-top border-4 border-danger p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div class="mx-auto mb-3 text-danger fs-1">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <h3 class="fw-bold mb-1 text-danger">Delete Job Vacancy</h3>
+          <p class="text-secondary small mb-0">Confirm permanent removal from the recruitment database</p>
+        </div>
+
+        <div class="p-3 bg-light rounded-2 border mb-4">
+          <div class="fw-bold text-dark mb-1">{{ job.title }}</div>
+          <div class="small text-muted mb-2">Department: {{ job.department }}</div>
+          <div class="d-flex justify-content-between small text-secondary">
+            <span>Deadline: {{ job.deadline|date:"M d, Y" }}</span>
+            <span>Status: <strong>{{ job.status }}</strong></span>
+          </div>
+        </div>
+
+        <div class="alert alert-warning small mb-4">
+          <i class="bi bi-info-circle-fill me-1"></i>
+          <strong>Caution:</strong> Deleting this opening will also remove all associated application data and AI matching vectors. This action cannot be reversed.
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-danger btn-lg">
+              <i class="bi bi-trash-fill me-1"></i> Yes, Permanently Delete Job
+            </button>
+            <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle me-1"></i> Cancel &amp; Keep Job
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

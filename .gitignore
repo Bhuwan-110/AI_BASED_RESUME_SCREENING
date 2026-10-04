@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.local
+
+# Database
+db.sqlite3
+db.sqlite3-journal
+*.backup
+*.zip
+
+# Media uploads (user uploaded resumes)
+media/resumes/
+!media/resumes/.gitkeep
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Antigravity / Gemini scratch
+scratch/

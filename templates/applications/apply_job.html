@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for {{ job.title }} | GURUKUL{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'core:career' %}">Careers</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'jobs:job_detail' job.pk %}">{{ job.title|truncatechars:28 }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Apply</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <!-- Breadcrumb & Navigation -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Submit Job Application</h2>
+          <p class="text-secondary small mb-0">Upload your PDF resume for AI-assisted semantic screening</p>
+        </div>
+        <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Job Details
+        </a>
+      </div>
+
+      <!-- Job Summary Banner -->
+      <div class="gk-card p-4 bg-white shadow-sm mb-4 border-start border-4 border-primary">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="gk-badge gk-badge-primary">{{ job.department }}</span>
+          <span class="badge bg-light text-secondary border">{{ job.job_type }}</span>
+        </div>
+        <h4 class="fw-bold text-dark mb-2">{{ job.title }}</h4>
+        <div class="row g-2 text-secondary small">
+          <div class="col-sm-6"><i class="bi bi-geo-alt text-primary me-1"></i> <strong>Location:</strong> {{ job.location }}</div>
+          <div class="col-sm-6"><i class="bi bi-clock-history text-primary me-1"></i> <strong>Deadline:</strong> {{ job.deadline|date:"M d, Y" }}</div>
+          <div class="col-sm-6"><i class="bi bi-mortarboard text-primary me-1"></i> <strong>Required Qualification:</strong> {{ job.qualification }}</div>
+          <div class="col-sm-6"><i class="bi bi-briefcase text-primary me-1"></i> <strong>Experience:</strong> {{ job.experience }}</div>
+        </div>
+      </div>
+
+      <!-- Application Submission Card -->
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm">
+        <h5 class="fw-bold text-dark border-bottom pb-2 mb-4">
+          <i class="bi bi-person-circle text-primary me-2"></i> Applicant Verification &amp; Resume Upload
+        </h5>
+
+        <div class="row g-3 mb-4 p-3 bg-light rounded-2 border">
+          <div class="col-sm-6">
+            <div class="text-muted small">Applicant Name</div>
+            <div class="fw-bold">{{ user.get_full_name|default:user.username }}</div>
+          </div>
+          <div class="col-sm-6">
+            <div class="text-muted small">Registered Email</div>
+            <div class="fw-bold">{{ user.email }}</div>
+          </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" data-loading-form novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 mb-3">
+              {% for error in form.non_field_errors %}
+                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="mb-4">
+            <label for="applicantCV" class="form-label fs-6 fw-bold">
+              Upload Resume / Curriculum Vitae <span class="required-indicator" aria-hidden="true">*</span>
+            </label>
+            {{ form.cv }}
+            {% if form.cv.errors %}
+              <div class="alert alert-danger py-2 mt-2 mb-0 small">
+                <i class="bi bi-x-circle-fill me-1"></i>
+                {% for error in form.cv.errors %}{{ error }}{% endfor %}
+              </div>
+            {% else %}
+              <div class="form-text mt-2 text-muted">
+                <i class="bi bi-info-circle me-1 text-primary"></i>
+                File format must be <strong>.pdf</strong> only. Maximum size: <strong>5 MB</strong>. Ensure your PDF text is selectable for natural language parsing.
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Academic Transparency Notice -->
+          <div class="p-3 bg-light rounded-2 border mb-4 small text-secondary">
+            <div class="fw-bold text-dark mb-1">
+              <i class="bi bi-shield-check text-primary me-1"></i> AI Screening &amp; Human Decision Policy
+            </div>
+            Your uploaded CV will be parsed and evaluated against the job's required skills. The AI generates advisory match scores; final hiring and interview shortlisting are performed exclusively by GURUKUL's academic panel.
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-secondary">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="bi bi-send-check"></i> Submit Application &amp; CV
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

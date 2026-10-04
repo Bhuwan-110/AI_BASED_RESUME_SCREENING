@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications | GURUKUL{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Job Seeker Navigation Sub-Bar -->
+  {% include 'components/seeker_subnav.html' %}
+
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="gk-badge gk-badge-primary">Candidate Tracking</span>
+        <span class="text-muted small">Application History</span>
+      </div>
+      <h2 class="fw-bold mb-0" style="color: var(--gk-primary);">My Job Applications</h2>
+      <p class="text-secondary small mb-0">
+        Review your submitted teaching and mentorship candidacies and track recruitment evaluation stages.
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'accounts:dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      </a>
+      <a href="{% url 'core:career' %}" class="btn btn-primary">
+        <i class="bi bi-search me-1"></i> Explore Openings
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Filter Pills -->
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <span class="small fw-bold text-muted text-uppercase me-1" style="font-size: 0.75rem;">Filter By Status:</span>
+    <a href="{% url 'applications:my_applications' %}"
+       class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+      All ({{ total_count }})
+    </a>
+    <a href="{% url 'applications:my_applications' %}?status=Applied"
+       class="btn btn-sm {% if status_filter == 'Applied' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+      Applied ({{ applied_count }})
+    </a>
+    <a href="{% url 'applications:my_applications' %}?status=Under Review"
+       class="btn btn-sm {% if status_filter == 'Under Review' %}btn-warning text-dark{% else %}btn-outline-secondary{% endif %}">
+      Under Review ({{ under_review_count }})
+    </a>
+    <a href="{% url 'applications:my_applications' %}?status=Shortlisted"
+       class="btn btn-sm {% if status_filter == 'Shortlisted' %}btn-success text-white{% else %}btn-outline-success{% endif %}">
+      Shortlisted ({{ shortlisted_count }})
+    </a>
+    <a href="{% url 'applications:my_applications' %}?status=Rejected"
+       class="btn btn-sm {% if status_filter == 'Rejected' %}btn-danger text-white{% else %}btn-outline-danger{% endif %}">
+      Rejected ({{ rejected_count }})
+    </a>
+  </div>
+
+  <!-- Applications Container -->
+  <div class="gk-card bg-white shadow-sm">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-file-earmark-person text-primary me-1"></i>
+        {% if status_filter %}
+          {{ status_filter }} Applications
+        {% else %}
+          All Applications
+        {% endif %}
+      </span>
+      <span class="small text-muted">{{ applications.count }} Submission{{ applications.count|pluralize }}</span>
+    </div>
+
+    {% if applications %}
+      <!-- 1. Desktop & Tablet Table View (screen size md and above) -->
+      <div class="d-none d-md-block table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 38%;">Job</th>
+              <th scope="col" style="width: 20%;">Applied Date</th>
+              <th scope="col" style="width: 18%;">Status</th>
+              <th scope="col" class="text-end" style="width: 24%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+              <tr>
+                <!-- Job Info -->
+                <td>
+                  <div class="fw-bold">
+                    <a href="{% url 'jobs:job_detail' app.job.pk %}" class="text-dark text-decoration-none">
+                      {{ app.job.title }}
+                    </a>
+                  </div>
+                  <div class="small text-muted">
+                    <span class="gk-badge gk-badge-primary" style="font-size: 0.68rem;">{{ app.job.department }}</span>
+                    <span class="ms-1">&bull; {{ app.job.location }}</span>
+                    <span class="ms-1">&bull; {{ app.job.job_type }}</span>
+                  </div>
+                </td>
+
+                <!-- Applied Date -->
+                <td class="small">
+                  <div>{{ app.applied_at|date:"M d, Y" }}</div>
+                  <div class="text-muted" style="font-size: 0.72rem;">{{ app.applied_at|date:"g:i A" }}</div>
+                </td>
+
+                <!-- Status Badge -->
+                <td>
+                  <span class="gk-badge {{ app.status_badge_class }}">
+                    {% if app.status == 'Shortlisted' %}
+                      <i class="bi bi-star-fill me-1"></i>
+                    {% elif app.status == 'Under Review' %}
+                      <i class="bi bi-hourglass-split me-1"></i>
+                    {% elif app.status == 'Rejected' %}
+                      <i class="bi bi-x-circle-fill me-1"></i>
+                    {% else %}
+                      <i class="bi bi-check-circle me-1"></i>
+                    {% endif %}
+                    {{ app.status }}
+                  </span>
+                </td>
+
+                <!-- Actions: View Application & View Job -->
+                <td class="text-end text-nowrap">
+                  <a href="{% url 'applications:view_application' app.pk %}" class="btn btn-sm btn-primary me-1" title="View Application Details &amp; Status">
+                    <i class="bi bi-card-text me-1"></i> View Application
+                  </a>
+                  <a href="{% url 'jobs:job_detail' app.job.pk %}" class="btn btn-sm btn-outline-secondary" title="View Job Description">
+                    <i class="bi bi-briefcase"></i> View Job
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2. Mobile Cards View (screen size below md) -->
+      <div class="d-md-none p-3 d-flex flex-column gap-3">
+        {% for app in applications %}
+          <div class="gk-app-card">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <span class="gk-badge gk-badge-primary" style="font-size: 0.68rem;">
+                {{ app.job.department }}
+              </span>
+              <span class="gk-badge {{ app.status_badge_class }}" style="font-size: 0.72rem;">
+                {% if app.status == 'Shortlisted' %}
+                  <i class="bi bi-star-fill me-1"></i>
+                {% elif app.status == 'Under Review' %}
+                  <i class="bi bi-hourglass-split me-1"></i>
+                {% elif app.status == 'Rejected' %}
+                  <i class="bi bi-x-circle-fill me-1"></i>
+                {% else %}
+                  <i class="bi bi-check-circle me-1"></i>
+                {% endif %}
+                {{ app.status }}
+              </span>
+            </div>
+
+            <h6 class="fw-bold mb-1">
+              <a href="{% url 'jobs:job_detail' app.job.pk %}" class="text-dark text-decoration-none">
+                {{ app.job.title }}
+              </a>
+            </h6>
+
+            <div class="small text-muted mb-3">
+              <div><i class="bi bi-geo-alt me-1"></i> {{ app.job.location }} &bull; {{ app.job.job_type }}</div>
+              <div><i class="bi bi-calendar3 me-1"></i> Applied: {{ app.applied_at|date:"M d, Y" }} at {{ app.applied_at|date:"g:i A" }}</div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <a href="{% url 'applications:view_application' app.pk %}" class="btn btn-sm btn-primary flex-grow-1">
+                <i class="bi bi-card-text me-1"></i> View Application
+              </a>
+              <a href="{% url 'jobs:job_detail' app.job.pk %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-briefcase me-1"></i> View Job
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <!-- Empty State -->
+      <div class="py-5">
+        <div class="gk-empty-state">
+          <div class="gk-empty-state-icon">
+            <i class="bi bi-folder2-open"></i>
+          </div>
+          <div class="gk-empty-state-title">
+            {% if status_filter %}
+              No '{{ status_filter }}' Applications Found
+            {% else %}
+              No Applications Submitted Yet
+            {% endif %}
+          </div>
+          <div class="gk-empty-state-text">
+            {% if status_filter %}
+              You currently have no applications under the '{{ status_filter }}' status. Try switching filters to view your other submissions.
+            {% else %}
+              You haven't submitted an application for any academic openings yet. Browse our current vacancies and submit your resume in PDF format.
+            {% endif %}
+          </div>
+          <div class="d-flex justify-content-center gap-2 mt-3">
+            {% if status_filter %}
+              <a href="{% url 'applications:my_applications' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-repeat me-1"></i> View All Applications
+              </a>
+            {% endif %}
+            <a href="{% url 'core:career' %}" class="btn btn-sm btn-primary">
+              <i class="bi bi-search me-1"></i> Explore Available Openings
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

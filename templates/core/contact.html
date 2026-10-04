@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | GURUKUL Online Academic Platform{% endblock %}
+{% block meta_description %}Get in touch with GURUKUL for inquiries regarding Loksewa classes, school and college
+education, mentorship sessions, or career opportunities.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-lg-3">
+    <div class="max-w-800">
+      <div
+        class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-primary-subtle text-primary border border-primary-subtle small fw-semibold">
+        <i class="bi bi-envelope-fill"></i> Get In Touch
+      </div>
+      <h1 class="display-6 fw-bold mb-3" style="color: var(--gk-primary);">Contact GURUKUL</h1>
+      <p class="lead text-secondary mb-0">
+        Have questions about our Loksewa batches, school and college coaching, or academic recruitment? Send us a
+        message or reach our office directly.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Info & Form Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Contact Information Sidebar -->
+      <div class="col-lg-5">
+        <div class="gk-card p-4 p-md-5 h-100 bg-white shadow-sm">
+          <h4 class="fw-bold mb-4" style="color: var(--gk-primary);">Academic Office</h4>
+          <p class="text-secondary small mb-4">
+            Our administrative and academic team is available to assist students, parents, and faculty applicants during
+            working hours.
+          </p>
+
+          <div class="d-flex align-items-start gap-3 mb-4">
+            <div class="gk-stat-icon primary" style="width: 44px; height: 44px; font-size: 1.2rem;">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Location</div>
+              <div class="text-secondary small">
+                GURUKUL Academic Center<br>
+                Putalisadak / Bagbazar<br>
+                Kathmandu, Nepal
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3 mb-4">
+            <div class="gk-stat-icon success" style="width: 44px; height: 44px; font-size: 1.2rem;">
+              <i class="bi bi-envelope"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Email Inquiries</div>
+              <div class="text-secondary small">
+                General: <a href="mailto:sikshagurukul@gmail.com">sikshagurukul@gmail.com</a><br>
+                Recruitment: <a href="mailto:sikshagurukul@gmail.com">sikshagurukul@gmail.com</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3 mb-4">
+            <div class="gk-stat-icon accent" style="width: 44px; height: 44px; font-size: 1.2rem;">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Telephone Support</div>
+              <div class="text-secondary small">
+                +977 9866102970 <br>
+                +977 9866102970 (Help Desk)
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3">
+            <div class="gk-stat-icon info" style="width: 44px; height: 44px; font-size: 1.2rem;">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Academic Hours</div>
+              <div class="text-secondary small">
+                Sunday &ndash; Friday: 6:30 AM &ndash; 6:00 PM<br>
+                Saturday: Closed (Designated for Mock Examinations)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Message Form -->
+      <div class="col-lg-7">
+        <div class="gk-card p-4 p-md-5 bg-white shadow-sm">
+          <h4 class="fw-bold mb-2">Send Us an Inquiry</h4>
+          <p class="text-secondary small mb-4">
+            Fill in the details below. We typically review and respond to inquiries within 1 business day.
+          </p>
+
+          <form method="POST" action="{% url 'core:contact' %}" data-loading-form novalidate>
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="contactName" class="form-label">Full Name <span class="required-indicator" aria-hidden="true">*</span></label>
+                <input type="text" class="form-control" id="contactName" name="name" placeholder="e.g. Anish Pokharel" required>
+                <div class="form-text">Your primary contact name.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="contactEmail" class="form-label">Email Address <span class="required-indicator" aria-hidden="true">*</span></label>
+                <input type="email" class="form-control" id="contactEmail" name="email" placeholder="name@example.com" required>
+                <div class="form-text">Where we will reply to your query.</div>
+              </div>
+
+              <div class="col-12">
+                <label for="contactSubject" class="form-label">Subject / Topic <span class="required-indicator" aria-hidden="true">*</span></label>
+                <input type="text" class="form-control" id="contactSubject" name="subject" placeholder="e.g. Inquiry regarding Loksewa Officer Preparation Batch" required>
+              </div>
+
+              <div class="col-12">
+                <label for="contactMessage" class="form-label">Your Message <span class="required-indicator" aria-hidden="true">*</span></label>
+                <textarea class="form-control" id="contactMessage" name="message" rows="5" placeholder="Please write your detailed query, course inquiry, or recruitment question here..." required></textarea>
+              </div>
+
+              <div class="col-12 mt-4 pt-2 border-top d-flex justify-content-between align-items-center">
+                <span class="small text-muted">
+                  <i class="bi bi-shield-lock me-1"></i> Your details are kept private and secure.
+                </span>
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-send"></i> Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

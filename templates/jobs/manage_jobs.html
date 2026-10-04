@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Jobs | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Admin Navigation Sub-Bar -->
+  {% include 'components/admin_subnav.html' %}
+
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="gk-badge gk-badge-primary">Administrator Control</span>
+        <span class="text-muted small">Academic Vacancy Directory</span>
+      </div>
+      <h2 class="fw-bold mb-0" style="color: var(--gk-primary);">Academic Job Vacancies</h2>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'jobs:create_job' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Create Job
+      </a>
+      <a href="{% url 'applications:admin_applicants' %}" class="btn btn-outline-primary">
+        <i class="bi bi-people me-1"></i> View Applicants
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards with Subtle Hover Animation -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <a href="{% url 'jobs:manage_jobs' %}?status=all" class="gk-stat-card d-block h-100 {% if status_filter == 'all' %}border-primary{% endif %}">
+        <div class="d-flex align-items-center gap-3">
+          <div class="gk-stat-icon primary">
+            <i class="bi bi-briefcase-fill"></i>
+          </div>
+          <div>
+            <div class="gk-stat-value">{{ total_count }}</div>
+            <div class="gk-stat-label">Total Jobs</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'jobs:manage_jobs' %}?status=active" class="gk-stat-card d-block h-100 {% if status_filter == 'active' %}border-success{% endif %}">
+        <div class="d-flex align-items-center gap-3">
+          <div class="gk-stat-icon success">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <div>
+            <div class="gk-stat-value text-success">{{ active_count }}</div>
+            <div class="gk-stat-label">Active Jobs</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="{% url 'jobs:manage_jobs' %}?status=expired" class="gk-stat-card d-block h-100 {% if status_filter == 'expired' %}border-danger{% endif %}">
+        <div class="d-flex align-items-center gap-3">
+          <div class="gk-stat-icon danger">
+            <i class="bi bi-hourglass-bottom"></i>
+          </div>
+          <div>
+            <div class="gk-stat-value text-danger">{{ expired_count }}</div>
+            <div class="gk-stat-label">Expired Jobs</div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Pills: Active / Expired / All + Create Job -->
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+    <div class="btn-group" role="group" aria-label="Job Status Filter">
+      <a href="{% url 'jobs:manage_jobs' %}?status=all" class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+        <i class="bi bi-list-ul me-1"></i> All ({{ total_count }})
+      </a>
+      <a href="{% url 'jobs:manage_jobs' %}?status=active" class="btn btn-sm {% if status_filter == 'active' %}btn-success text-white{% else %}btn-outline-secondary{% endif %}">
+        <i class="bi bi-check-circle me-1"></i> Active ({{ active_count }})
+      </a>
+      <a href="{% url 'jobs:manage_jobs' %}?status=expired" class="btn btn-sm {% if status_filter == 'expired' %}btn-danger text-white{% else %}btn-outline-secondary{% endif %}">
+        <i class="bi bi-hourglass-bottom me-1"></i> Expired ({{ expired_count }})
+      </a>
+    </div>
+
+    <a href="{% url 'jobs:create_job' %}" class="btn btn-sm btn-primary">
+      <i class="bi bi-plus-circle me-1"></i> Create Job
+    </a>
+  </div>
+
+  <!-- Jobs Table -->
+  <div class="gk-card bg-white shadow-sm">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-list-task me-1 text-primary"></i>
+        {% if status_filter == 'active' %}
+          Active Openings
+        {% elif status_filter == 'expired' %}
+          Expired Openings
+        {% else %}
+          All Vacancies
+        {% endif %}
+      </span>
+      <span class="small text-muted">Showing {{ jobs.count }} Position{{ jobs.count|pluralize }}</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 28%;">Title &amp; Department</th>
+            <th scope="col">Job Type</th>
+            <th scope="col">Location</th>
+            <th scope="col">Deadline</th>
+            <th scope="col">Status</th>
+            <th scope="col">Applicants</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+            <tr>
+              <td>
+                <div class="fw-bold">
+                  <a href="{% url 'jobs:job_detail' job.pk %}" class="text-dark">{{ job.title }}</a>
+                </div>
+                <span class="gk-badge gk-badge-primary" style="font-size: 0.7rem;">{{ job.department }}</span>
+              </td>
+              <td class="small">{{ job.job_type }}</td>
+              <td class="small text-muted">{{ job.location }}</td>
+              <td class="small">
+                <span class="{% if job.is_expired %}text-danger fw-semibold{% else %}text-dark{% endif %}">
+                  {{ job.deadline|date:"M d, Y" }}
+                </span>
+              </td>
+              <td>
+                {% if job.is_active %}
+                  <span class="gk-badge gk-badge-success">
+                    <i class="bi bi-check-circle"></i> Active
+                  </span>
+                {% else %}
+                  <span class="gk-badge gk-badge-danger">
+                    <i class="bi bi-x-circle"></i> Expired
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'applications:admin_applicants' %}?job={{ job.pk }}" class="badge bg-primary-subtle text-primary border border-primary-subtle text-decoration-none fw-semibold" title="View Candidate Applicants">
+                  <i class="bi bi-people me-1"></i> {{ job.applicant_count }}
+                </a>
+              </td>
+              <td class="text-end text-nowrap">
+                <a href="{% url 'applications:admin_applicants' %}?job={{ job.pk }}" class="btn btn-sm btn-outline-info me-1" title="View Applicants">
+                  <i class="bi bi-people"></i>
+                </a>
+                <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-secondary me-1" title="View Position Details">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'jobs:edit_job' job.pk %}" class="btn btn-sm btn-outline-primary me-1" title="Edit Vacancy">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteJobModal{{ job.pk }}" title="Delete Vacancy">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Delete Confirmation Modal for Destructive Action -->
+            <div class="modal fade" id="deleteJobModal{{ job.pk }}" tabindex="-1" aria-labelledby="deleteJobModalLabel{{ job.pk }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                  <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-danger" id="deleteJobModalLabel{{ job.pk }}">
+                      <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Job Deletion
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body py-4">
+                    <p class="mb-2">Are you sure you want to permanently delete this job opening?</p>
+                    <div class="p-3 bg-light rounded border mb-3">
+                      <div class="fw-bold text-dark">{{ job.title }}</div>
+                      <div class="small text-muted">{{ job.department }} &bull; Deadline: {{ job.deadline|date:"M d, Y" }}</div>
+                      <div class="small text-danger mt-1">
+                        <i class="bi bi-info-circle"></i> Associated candidate applications ({{ job.applicant_count }}) will also be affected.
+                      </div>
+                    </div>
+                    <p class="text-secondary small mb-0">This action is permanent and cannot be undone.</p>
+                  </div>
+                  <div class="modal-footer border-top bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{% url 'jobs:delete_job' job.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Yes, Permanently Delete
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="py-5">
+                <div class="gk-empty-state">
+                  <div class="gk-empty-state-icon"><i class="bi bi-briefcase"></i></div>
+                  <div class="gk-empty-state-title">
+                    {% if status_filter == 'active' %}
+                      No Active Job Openings
+                    {% elif status_filter == 'expired' %}
+                      No Expired Job Openings
+                    {% else %}
+                      No Job Vacancies Found
+                    {% endif %}
+                  </div>
+                  <div class="gk-empty-state-text">
+                    {% if status_filter != 'all' %}
+                      No vacancies match the '{{ status_filter|title }}' filter criteria.
+                    {% else %}
+                      Start by posting an academic teaching role, mentorship opening, or curriculum author vacancy.
+                    {% endif %}
+                  </div>
+                  <div class="d-flex justify-content-center gap-2 mt-3">
+                    {% if status_filter != 'all' %}
+                      <a href="{% url 'jobs:manage_jobs' %}?status=all" class="btn btn-outline-secondary btn-sm">
+                        View All Openings
+                      </a>
+                    {% endif %}
+                    <a href="{% url 'jobs:create_job' %}" class="btn btn-primary btn-sm">
+                      <i class="bi bi-plus-circle me-1"></i> Create Job
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

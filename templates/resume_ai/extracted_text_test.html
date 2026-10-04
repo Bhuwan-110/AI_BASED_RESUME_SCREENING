@@ -1,0 +1,463 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Resume Screening &amp; NLP Diagnostic | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Top Admin Diagnostic Navigation -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="gk-badge gk-badge-danger">
+          <i class="bi bi-shield-lock-fill"></i> Admin AI Diagnostic
+        </span>
+        <span class="text-muted small">TF-IDF Vector Space &amp; Cosine Similarity Analysis</span>
+      </div>
+      <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">AI Resume Screening Analysis</h2>
+      <p class="text-secondary small mb-0">
+        Explainable NLP match evaluation between position requirements and candidate resume.
+      </p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Applicants
+      </a>
+      <a href="?re_screen=true" class="btn btn-primary">
+        <i class="bi bi-cpu"></i> Re-Calculate AI Match
+      </a>
+      <a href="?re_extract=true" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-repeat"></i> Re-Extract PDF
+      </a>
+    </div>
+  </div>
+
+  <!-- Mandatory Decision Support Ethics Alert -->
+  <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4"
+    style="background-color: #EBF3FA; border-left: 4px solid var(--gk-primary) !important;">
+    <i class="bi bi-info-circle-fill text-primary fs-3 flex-shrink-0"></i>
+    <div class="small">
+      <strong>Academic &amp; Ethical Guarantee: Decision Support Only</strong><br>
+      This AI match percentage is computed strictly to assist human administrators with candidate review prioritization.
+      <strong>No candidate is ever automatically hired or rejected.</strong> Final employment decisions are 100%
+      human-controlled.
+    </div>
+  </div>
+
+  <!-- Candidate & Job Summary Card -->
+  <div class="gk-card p-4 bg-white shadow-sm mb-4 border-start border-4 border-primary">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <div class="text-muted small">Candidate Name</div>
+        <div class="fw-bold fs-5 text-dark">{{
+          application.applicant.get_full_name|default:application.applicant.username }}</div>
+        <div class="small text-muted">{{ application.applicant.email }}</div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="text-muted small">Applied Position</div>
+        <div class="fw-bold text-dark">{{ job.title }}</div>
+        <div class="d-flex gap-2 align-items-center mt-1">
+          <span class="gk-badge gk-badge-primary" style="font-size: 0.7rem;">{{ job.department }}</span>
+          <span class="small text-muted">&bull; Required Skills: {{ job.required_skills|truncatechars:45 }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 text-md-end">
+        <div class="text-muted small mb-1">Application Status</div>
+        <div>
+          <span class="gk-badge {{ application.status_badge_class }} py-2 px-3">
+            {{ application.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Match Score Banner -->
+  <div class="row g-4 mb-4">
+    <!-- Match Percentage KPI Card -->
+    <div class="col-lg-5">
+      <div class="gk-card p-4 bg-white shadow-sm h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold text-muted text-uppercase small">AI Match Percentage</span>
+            {% if screening.status == 'SUCCESS' %}
+            <span class="gk-badge {{ screening.badge_class }}">{{ screening.status }}</span>
+            {% else %}
+            <span class="gk-badge gk-badge-warning">{{ screening.status }}</span>
+            {% endif %}
+          </div>
+
+          <div class="d-flex align-items-baseline gap-2 my-2">
+            <span class="display-4 fw-bold" style="color: var(--gk-primary);">
+              {{ screening.match_percentage }}%
+            </span>
+            <span class="text-muted small">overall fit</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress mb-3" style="height: 12px; border-radius: 6px; background-color: #E2E8F0;">
+            <div
+              class="progress-bar {% if screening.match_percentage >= 65 %}bg-success{% elif screening.match_percentage >= 35 %}bg-primary{% else %}bg-danger{% endif %}"
+              role="progressbar" style="width: {{ screening.match_percentage }}%;"
+              aria-valuenow="{{ screening.match_percentage }}" aria-valuemin="0" aria-valuemax="100">
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-light rounded-2 border small">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Cosine Similarity Raw Score:</span>
+            <strong class="font-monospace text-dark">{{ screening.similarity_score }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted">Common Matched Keywords:</span>
+            <strong class="text-dark">{{ matched_keywords|length }} terms</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Screening Model:</span>
+            <span class="badge bg-secondary">TF-IDF + Cosine Sim (sklearn)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Algorithm Parameters & Telemetry -->
+    <div class="col-lg-7">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <h5 class="fw-bold text-dark mb-3">
+          <i class="bi bi-gear-wide-connected text-primary me-2"></i> NLP Telemetry &amp; Vector Space
+        </h5>
+
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-2 border">
+              <span class="text-muted small d-block">Job Description Corpus</span>
+              <strong class="fs-5 text-dark">{{ job.description|wordcount }} words</strong>
+              <div class="text-secondary small mt-1">
+                + {{ job.required_skills|wordcount }} words in required skills
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="p-3 bg-light rounded-2 border">
+              <span class="text-muted small d-block">Candidate CV Corpus</span>
+              <strong class="fs-5 text-dark">{{ extraction.word_count }} words</strong>
+              <div class="text-secondary small mt-1">
+                across {{ extraction.page_count }} page{{ extraction.page_count|pluralize }} extracted
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Formula Explanation -->
+        <div class="p-3 rounded-2 border small" style="background-color: #F8FAFC;">
+          <div class="fw-bold text-dark mb-1">
+            <i class="bi bi-calculator text-primary me-1"></i> Cosine Similarity Equation:
+          </div>
+          <div class="font-monospace text-secondary mb-2" style="font-size: 0.825rem;">
+            cos(&theta;) = (Job_Vector &bull; Resume_Vector) / ( ||Job_Vector|| &times; ||Resume_Vector|| )
+          </div>
+          <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.5;">
+            Because TF-IDF vectors are L2-normalized, the cosine similarity directly equals the dot product of the two
+            vectors, ensuring that longer resumes do not receive an unfair mathematical advantage over concise resumes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Required Skills Matching Analysis (MATCHED vs MISSING) -->
+  <div class="gk-card bg-white shadow-sm mb-4">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-check2-square text-primary me-2"></i> Required Skills Analysis
+      </span>
+      <span class="small text-muted">
+        Compared against normalized CV text (lowercase &bull; whitespace &bull; punctuation handled)
+      </span>
+    </div>
+    <div class="p-4">
+      <div class="row g-4">
+        <!-- Matched Skills Column -->
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 border h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-success">
+                <i class="bi bi-check-circle-fill me-1"></i> Matched Skills
+              </span>
+              <span class="badge bg-success">{{ matched_skills|length }} Matched</span>
+            </div>
+            {% if matched_skills %}
+            <div class="d-flex flex-wrap gap-2">
+              {% for skill in matched_skills %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6">
+                <i class="bi bi-check2 me-1"></i> {{ skill }}
+              </span>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-muted small">No required skills were directly detected in candidate CV text.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Missing Skills Column -->
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 border h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-danger">
+                <i class="bi bi-x-circle-fill me-1"></i> Missing Skills
+              </span>
+              <span class="badge bg-danger">{{ missing_skills|length }} Missing</span>
+            </div>
+            {% if missing_skills %}
+            <div class="d-flex flex-wrap gap-2">
+              {% for skill in missing_skills %}
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 fs-6">
+                <i class="bi bi-x me-1"></i> {{ skill }}
+              </span>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-success small fw-semibold">
+              <i class="bi bi-star-fill text-warning me-1"></i> All required skills are present in the candidate CV!
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Qualification & Experience Verification Cards -->
+  <div class="row g-4 mb-4">
+    <!-- Qualification Verification -->
+    <div class="col-md-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <span class="fw-bold text-muted text-uppercase small d-block">Academic Qualification Check</span>
+            <h5 class="fw-bold text-dark mb-0">
+              <i class="bi bi-mortarboard text-primary me-1"></i> Qualification Match
+            </h5>
+          </div>
+          <span class="gk-badge {{ screening.qualification_badge_class }} fs-6 py-2 px-3">
+            {{ screening.qualification_match }}
+          </span>
+        </div>
+        <div class="p-3 bg-light rounded-2 border small mt-3">
+          <div class="mb-2">
+            <span class="text-muted d-block">Position Requirement:</span>
+            <strong>{{ job.qualification|default:"Not specified" }}</strong>
+          </div>
+          <div>
+            <span class="text-muted d-block">Verification Finding:</span>
+            <span class="text-secondary">{{ screening.qualification_detail|default:"Needs manual verification from
+              academic transcripts." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Verification -->
+    <div class="col-md-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <span class="fw-bold text-muted text-uppercase small d-block">Work Experience Check</span>
+            <h5 class="fw-bold text-dark mb-0">
+              <i class="bi bi-briefcase text-primary me-1"></i> Experience Match
+            </h5>
+          </div>
+          <span class="gk-badge {{ screening.experience_badge_class }} fs-6 py-2 px-3">
+            {{ screening.experience_match }}
+          </span>
+        </div>
+        <div class="p-3 bg-light rounded-2 border small mt-3">
+          <div class="mb-2">
+            <span class="text-muted d-block">Position Requirement:</span>
+            <strong>{{ job.experience|default:"Not specified" }}</strong>
+          </div>
+          <div>
+            <span class="text-muted d-block">Verification Finding:</span>
+            <span class="text-secondary">{{ screening.experience_detail|default:"Needs manual review of employment
+              history." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matched Keywords Breakdown Table (Explainable AI) -->
+  <div class="gk-card bg-white shadow-sm mb-4">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-bullseye text-primary me-2"></i> Transparent Keyword Contribution Breakdown
+      </span>
+      <span class="badge bg-primary">{{ matched_keywords|length }} Overlapping Terms</span>
+    </div>
+
+    <div class="table-responsive">
+      {% if matched_keywords %}
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" style="width: 25%;">Matched Term</th>
+            <th scope="col">Job Vector Weight</th>
+            <th scope="col">Resume Vector Weight</th>
+            <th scope="col">Vector Dot Product Contribution</th>
+            <th scope="col">Significance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in matched_keywords %}
+          <tr>
+            <td>
+              <span class="badge bg-light text-primary border font-monospace px-2 py-1 fs-6">
+                {{ item.term }}
+              </span>
+            </td>
+            <td class="font-monospace small">{{ item.job_weight }}</td>
+            <td class="font-monospace small">{{ item.resume_weight }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="font-monospace fw-bold text-success">{{ item.contribution }}</span>
+                <div class="progress flex-grow-1" style="height: 6px; max-width: 120px;">
+                  <div class="progress-bar bg-success" style="width: {% widthratio item.contribution 0.2 100 %}%;">
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if forloop.counter <= 3 %} <span class="gk-badge gk-badge-success" style="font-size: 0.7rem;">Primary
+                Driver</span>
+                {% else %}
+                <span class="gk-badge gk-badge-primary" style="font-size: 0.7rem;">Supporting Skill</span>
+                {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="p-4 text-center text-muted">
+        <i class="bi bi-info-circle fs-3 text-secondary d-block mb-2"></i>
+        <p class="mb-0">No direct overlapping keyword terms were detected between the job requirements and this resume.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="gk-card-footer small text-muted">
+      <i class="bi bi-check2-circle text-success me-1"></i>
+      Each term contribution represents the exact product of that term's TF-IDF weight in the job specification and the
+      candidate's resume.
+    </div>
+  </div>
+
+  <!-- TF-IDF Vector Exploration Tabs -->
+  <div class="row g-4 mb-4">
+    <!-- Top Job Vector Terms -->
+    <div class="col-md-6">
+      <div class="gk-card bg-white shadow-sm h-100">
+        <div class="gk-card-header d-flex justify-content-between align-items-center">
+          <span class="fw-bold">
+            <i class="bi bi-briefcase text-primary me-2"></i> Job Specification Vector Terms
+          </span>
+          <span class="badge bg-secondary">{{ job_vector|length }} Terms</span>
+        </div>
+        <div class="p-3" style="max-height: 280px; overflow-y: auto;">
+          <div class="d-flex flex-wrap gap-2">
+            {% for term, weight in job_vector.items %}
+            <span class="badge bg-light text-dark border p-2 font-monospace">
+              {{ term }} <span class="text-primary fw-bold">({{ weight }})</span>
+            </span>
+            {% empty %}
+            <span class="text-muted small">No vector terms generated.</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Resume Vector Terms -->
+    <div class="col-md-6">
+      <div class="gk-card bg-white shadow-sm h-100">
+        <div class="gk-card-header d-flex justify-content-between align-items-center">
+          <span class="fw-bold">
+            <i class="bi bi-file-earmark-person text-primary me-2"></i> Candidate Resume Vector Terms
+          </span>
+          <span class="badge bg-secondary">{{ resume_vector|length }} Terms</span>
+        </div>
+        <div class="p-3" style="max-height: 280px; overflow-y: auto;">
+          <div class="d-flex flex-wrap gap-2">
+            {% for term, weight in resume_vector.items %}
+            <span class="badge bg-light text-dark border p-2 font-monospace">
+              {{ term }} <span class="text-success fw-bold">({{ weight }})</span>
+            </span>
+            {% empty %}
+            <span class="text-muted small">No vector terms generated.</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raw Extracted Resume Stream Accordion -->
+  <div class="accordion mb-4" id="extractedTextAccordion">
+    <div class="accordion-item shadow-sm border">
+      <h2 class="accordion-header" id="headingText">
+        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapseText" aria-expanded="false" aria-controls="collapseText">
+          <i class="bi bi-file-text text-primary me-2"></i> View Cleaned Extracted Resume Text (pypdf stream)
+        </button>
+      </h2>
+      <div id="collapseText" class="accordion-collapse collapse" aria-labelledby="headingText"
+        data-bs-parent="#extractedTextAccordion">
+        <div class="accordion-body bg-light">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small text-muted">{{ extraction.word_count }} words &bull; {{ extraction.page_count }}
+              pages</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary"
+              onclick="navigator.clipboard.writeText(document.getElementById('extractedContent').innerText); alert('Text copied to clipboard!');">
+              <i class="bi bi-clipboard"></i> Copy
+            </button>
+          </div>
+          <div class="p-3 bg-white rounded border font-monospace" id="extractedContent"
+            style="white-space: pre-wrap; font-size: 0.85rem; max-height: 400px; overflow-y: auto;">
+            {{ extraction.extracted_text }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Defense Explanatory Box -->
+  <div class="gk-card p-4 bg-white shadow-sm border-top border-4 border-primary">
+    <h5 class="fw-bold text-dark mb-2">
+      <i class="bi bi-mortarboard-fill text-primary me-2"></i> TERMS &amp; Architectural Rationale
+    </h5>
+    <div class="row g-3 small text-secondary">
+      <div class="col-md-4">
+        <strong class="text-dark d-block mb-1">1. Term Frequency (TF-IDF)</strong>
+        Extracts distinctive vocabulary from the job vacancy and the candidate's resume, dampening ubiquitous
+        grammatical noise words using standard English stop-word filtering.
+      </div>
+      <div class="col-md-4">
+        <strong class="text-dark d-block mb-1">2. Cosine Similarity Angle</strong>
+        Measures the directional alignment of the high-dimensional feature vectors. Because it normalizes by vector
+        magnitude, conciseness is never penalized.
+      </div>
+      <div class="col-md-4">
+        <strong class="text-dark d-block mb-1">3. Privacy &amp; Reliability</strong>
+        All NLP processing runs locally on the host server without transmitting candidate personal data to external
+        third-party LLMs or commercial APIs.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

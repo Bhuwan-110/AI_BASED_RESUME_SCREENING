@@ -1,0 +1,84 @@
+{
+  "model_name": "GURUKUL-CV Resume Relevance Classifier",
+  "model_type": "Pipeline(TfidfVectorizer + LogisticRegression)",
+  "version": "1.0.0",
+  "trained_at": "2026-10-04T05:00:26.623667+00:00",
+  "dataset_statistics": {
+    "initial_rows": 50,
+    "valid_rows": 50,
+    "dropped_rows": 0,
+    "duplicate_pairs": 0,
+    "class_distribution": {
+      "relevant_1": 22,
+      "non_relevant_0": 28
+    },
+    "relevant_ratio": 0.44
+  },
+  "training_config": {
+    "test_size": 0.25,
+    "random_state": 42,
+    "train_samples": 37,
+    "test_samples": 13,
+    "max_features": 5000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "regularization_C": 1.0,
+    "vocabulary_size": 1616
+  },
+  "test_class_distribution": {
+    "relevant_1": 6,
+    "non_relevant_0": 7
+  },
+  "ml_model_evaluation": {
+    "accuracy": 0.8462,
+    "precision": 0.8333,
+    "recall": 0.8333,
+    "f1_score": 0.8333,
+    "roc_auc": 0.9762,
+    "confusion_matrix": [
+      [
+        6,
+        1
+      ],
+      [
+        1,
+        5
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "True Negative",
+      "False Positive",
+      "False Negative",
+      "True Positive"
+    ]
+  },
+  "baseline_comparison": {
+    "method": "TF-IDF Cosine Similarity (Baseline)",
+    "threshold": 0.1,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        7,
+        0
+      ],
+      [
+        0,
+        6
+      ]
+    ],
+    "sample_size": 13
+  },
+  "performance_delta": {
+    "f1_improvement": -0.1667,
+    "precision_improvement": -0.1667,
+    "recall_improvement": -0.1667,
+    "accuracy_improvement": -0.1538
+  },
+  "ethical_notice": "This model provides quantitative decision-support indicators. It does NOT automate recruitment or rejection decisions. Final hiring decisions remain strictly with human administrators."
+}

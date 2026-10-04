@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Details | GURUKUL{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Sub Navigation Bar based on user role -->
+  {% if is_admin %}
+    {% include 'components/admin_subnav.html' %}
+  {% else %}
+    {% include 'components/seeker_subnav.html' %}
+  {% endif %}
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      {% if is_admin %}
+        <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">Admin</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'applications:admin_applicants' %}">Applicants</a></li>
+      {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'applications:my_applications' %}">My Applications</a></li>
+      {% endif %}
+      <li class="breadcrumb-item active" aria-current="page">#APP-{{ application.pk|stringformat:"04d" }} ({{ job.title|truncatechars:20 }})</li>
+    </ol>
+  </nav>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <!-- Breadcrumb & Header Nav -->
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-2">
+        <div>
+          <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Application Record</h2>
+          <p class="text-secondary small mb-0">Reference ID: #APP-{{ application.pk|stringformat:"04d" }}</p>
+        </div>
+        <div class="d-flex gap-2">
+          {% if is_admin %}
+            <a href="{% url 'applications:admin_applicants' %}?job={{ job.pk }}" class="btn btn-sm btn-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back to Applicants
+            </a>
+          {% else %}
+            <a href="{% url 'applications:my_applications' %}" class="btn btn-sm btn-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back to My Applications
+            </a>
+          {% endif %}
+          <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-outline-primary" target="_blank">
+            <i class="bi bi-eye me-1"></i> View Job Specs
+          </a>
+        </div>
+      </div>
+
+      <!-- Application Summary Card -->
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 pb-3 mb-4 border-bottom">
+          <div>
+            <span class="gk-badge gk-badge-primary mb-1">{{ job.department }}</span>
+            <h3 class="fw-bold text-dark mb-0">{{ job.title }}</h3>
+          </div>
+          <div>
+            <span class="gk-badge {{ application.status_badge_class }} fs-6 py-2 px-3">
+              {% if application.status == 'Shortlisted' %}
+                <i class="bi bi-star-fill me-1"></i>
+              {% elif application.status == 'Under Review' %}
+                <i class="bi bi-hourglass-split me-1"></i>
+              {% elif application.status == 'Rejected' %}
+                <i class="bi bi-x-circle-fill me-1"></i>
+              {% else %}
+                <i class="bi bi-check-circle me-1"></i>
+              {% endif %}
+              Status: {{ application.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Candidate Status Tracker Explanation Card (For Job Seekers) -->
+        {% if not is_admin %}
+          <div class="mb-4 p-4 rounded-3 border {% if application.status == 'Shortlisted' %}bg-success-subtle border-success-subtle{% elif application.status == 'Rejected' %}bg-danger-subtle border-danger-subtle{% elif application.status == 'Under Review' %}bg-warning-subtle border-warning-subtle{% else %}bg-light{% endif %}">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi {% if application.status == 'Shortlisted' %}bi-award text-success{% elif application.status == 'Rejected' %}bi-info-circle text-danger{% elif application.status == 'Under Review' %}bi-hourglass-split text-warning{% else %}bi-check-circle text-primary{% endif %} fs-4"></i>
+              <h5 class="fw-bold mb-0 text-dark">
+                Application Review Status: {{ application.status }}
+              </h5>
+            </div>
+            <p class="mb-0 text-secondary" style="font-size: 0.9rem; line-height: 1.5;">
+              {% if application.status == 'Shortlisted' %}
+                Congratulations! Your profile has been shortlisted by the GURUKUL recruitment committee for this opening. The department will contact you directly via your registered email or phone with interview and presentation details.
+              {% elif application.status == 'Under Review' %}
+                Your qualifications, teaching background, and resume are actively being evaluated by the academic department coordinator. We appreciate your patience while reviews are underway.
+              {% elif application.status == 'Rejected' %}
+                Thank you for your interest in teaching at GURUKUL. While this specific position was not a match for your profile at this time, we encourage you to browse our other open vacancies and apply for future roles.
+              {% else %}
+                Your application has been received and logged into our candidate queue. It is awaiting initial review by the academic recruitment team.
+              {% endif %}
+            </p>
+          </div>
+        {% endif %}
+
+        <div class="row g-4 mb-4">
+          <!-- Applicant Column -->
+          <div class="col-md-6">
+            <h6 class="fw-bold text-muted text-uppercase small mb-3">Applicant Information</h6>
+            <div class="p-3 bg-light rounded-2 border">
+              <div class="mb-2">
+                <span class="text-muted small d-block">Full Name</span>
+                <span class="fw-bold text-dark">{{ application.applicant.get_full_name|default:application.applicant.username }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-muted small d-block">Email Address</span>
+                <span class="fw-semibold text-dark">{{ application.applicant.email }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-muted small d-block">Contact Phone</span>
+                <span class="text-dark">{{ application.applicant.profile.phone|default:"Not specified" }}</span>
+              </div>
+              <div>
+                <span class="text-muted small d-block">Submission Timestamp</span>
+                <span class="small text-dark">{{ application.applied_at|date:"F d, Y, g:i A" }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Position Column -->
+          <div class="col-md-6">
+            <h6 class="fw-bold text-muted text-uppercase small mb-3">Position Information</h6>
+            <div class="p-3 bg-light rounded-2 border">
+              <div class="mb-2">
+                <span class="text-muted small d-block">Location</span>
+                <span class="fw-semibold text-dark">{{ job.location }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-muted small d-block">Job Type</span>
+                <span class="fw-semibold text-dark">{{ job.job_type }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-muted small d-block">Application Cutoff</span>
+                <span class="text-dark">{{ job.deadline|date:"F d, Y" }}</span>
+              </div>
+              <div>
+                <span class="text-muted small d-block">Vacancy Status</span>
+                {% if job.is_active %}
+                  <span class="text-success fw-bold">Active Open Vacancy</span>
+                {% else %}
+                  <span class="text-danger fw-bold">Expired</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume File Section -->
+        <div class="mb-4">
+          <h6 class="fw-bold text-muted text-uppercase small mb-2">Submitted Resume Document</h6>
+          <div class="p-3 bg-white rounded border d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+              <i class="bi bi-file-earmark-pdf text-danger fs-2"></i>
+              <div>
+                <div class="fw-bold">{{ application.cv.name }}</div>
+                <div class="text-muted small">Validated PDF Format</div>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              {% if is_admin %}
+                <a href="{% url 'resume_ai:analyze_resume' application.pk %}" class="btn btn-primary">
+                  <i class="bi bi-cpu me-1"></i> Analyze CV
+                </a>
+              {% endif %}
+              {% if application.cv %}
+                <a href="{{ application.cv.url }}" class="btn btn-outline-primary" target="_blank">
+                  <i class="bi bi-download"></i> View / Download CV
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin AI Decision-Support Screening Summary (RESTRICTED ONLY TO ADMINS) -->
+        {% if is_admin and application.resume_screening %}
+          <div class="mb-4 p-4 rounded-3 border bg-light">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+              <h6 class="fw-bold text-dark mb-0">
+                <i class="bi bi-robot text-primary me-2"></i> AI Resume Screening (Decision Support)
+              </h6>
+              <div class="d-flex align-items-center gap-2">
+                {% if application.resume_screening.ml_predicted_class %}
+                  <span class="gk-badge {{ application.resume_screening.ml_badge_class }} fs-6" title="Supervised ML Relevance Prediction">
+                    <i class="bi bi-cpu me-1"></i> ML: {{ application.resume_screening.ml_predicted_class }} ({{ application.resume_screening.ml_relevance_percentage }}%)
+                  </span>
+                {% endif %}
+                <span class="gk-badge {{ application.resume_screening.badge_class }} fs-6" title="Unsupervised TF-IDF Cosine Similarity">
+                  {{ application.resume_screening.match_percentage }}% Match
+                </span>
+              </div>
+            </div>
+            <p class="small text-muted mb-3">
+              Combines supervised Logistic Regression ML classification with scikit-learn TF-IDF &amp; Cosine Similarity against position requirements.
+            </p>
+            <!-- Required Skills Breakdown -->
+            <div class="mb-3">
+              <div class="small fw-bold text-dark mb-1">Required Skills Check:</div>
+              <div class="d-flex flex-wrap align-items-center gap-1">
+                {% for s in application.resume_screening.matched_skills %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">
+                    <i class="bi bi-check2"></i> {{ s }}
+                  </span>
+                {% endfor %}
+                {% for s in application.resume_screening.missing_skills %}
+                  <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                    <i class="bi bi-x"></i> {{ s }}
+                  </span>
+                {% endfor %}
+                {% if not application.resume_screening.matched_skills and not application.resume_screening.missing_skills %}
+                  <span class="small text-muted">No specific required skills listed.</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Qualification and Experience Badges -->
+            <div class="d-flex flex-wrap gap-2 mb-3 small">
+              <div>
+                <span class="text-muted">Qualification:</span>
+                <span class="gk-badge {{ application.resume_screening.qualification_badge_class }} ms-1">
+                  {{ application.resume_screening.qualification_match }}
+                </span>
+              </div>
+              <div class="ms-md-2">
+                <span class="text-muted">Experience:</span>
+                <span class="gk-badge {{ application.resume_screening.experience_badge_class }} ms-1">
+                  {{ application.resume_screening.experience_match }}
+                </span>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{% url 'resume_ai:analyze_resume' application.pk %}" class="btn btn-sm btn-primary">
+                <i class="bi bi-file-earmark-bar-graph me-1"></i> View Full Resume Analysis &rarr;
+              </a>
+              <a href="{% url 'resume_ai:view_extracted_text' application.pk %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-cpu me-1"></i> NLP Diagnostics
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Admin Status Update Section (Only for Admins) -->
+        {% if is_admin %}
+          <div class="p-4 bg-light rounded-3 border border-primary-subtle mt-4">
+            <h5 class="fw-bold text-primary mb-2">
+              <i class="bi bi-shield-check me-1"></i> Administrator Evaluation Control
+            </h5>
+            <p class="text-secondary small mb-3">Update candidate's status in the recruitment workflow:</p>
+            <form method="POST" action="{% url 'applications:update_status' application.pk %}" class="d-flex align-items-center gap-3 flex-wrap">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <div style="min-width: 220px;">
+                <select name="status" class="form-select">
+                  {% for code, label in application.STATUS_CHOICES %}
+                    <option value="{{ code }}" {% if application.status == code %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check2"></i> Update Status
+              </button>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}GURUKUL | Online Teaching, Learning & Mentorship Platform{% endblock %}
+
+{% block content %}
+<!-- 1. HERO SECTION -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-primary-subtle text-primary border border-primary-subtle small fw-semibold">
+          <i class="bi bi-mortarboard-fill"></i> GURUKUL Online Academic Platform
+        </div>
+        <h1 class="display-5 fw-bold mb-3" style="color: var(--gk-primary);">
+          Empowering Learners Through Quality Education &amp; Mentorship
+        </h1>
+        <p class="lead text-secondary mb-4" style="font-size: 1.15rem;">
+          GURUKUL is a dedicated digital learning hub offering structured Loksewa preparation, school level foundation courses, college education, and individual academic mentorship across Nepal.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3">
+          <!-- Primary CTA -->
+          <a href="{% url 'core:career' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-briefcase"></i> Explore Careers
+          </a>
+          <!-- Secondary CTA -->
+          <a href="#about-gurukul" class="btn btn-secondary btn-lg">
+            <i class="bi bi-arrow-down-circle"></i> Learn More
+          </a>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-4 mt-4 pt-3 text-muted small border-top">
+          <div><i class="bi bi-check2-circle text-success me-1"></i> Structured Preparation</div>
+          <div><i class="bi bi-check2-circle text-success me-1"></i> Expert-Led Faculty</div>
+          <div><i class="bi bi-check2-circle text-success me-1"></i> Personalized Guidance</div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="gk-card p-4 shadow-sm border-2">
+          <div class="d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
+            <h5 class="mb-0 fw-bold">Academic Focus Areas</h5>
+            <span class="gk-badge gk-badge-primary">Nepal</span>
+          </div>
+
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <div class="gk-stat-icon primary" style="width: 40px; height: 40px; font-size: 1.1rem;">
+              <i class="bi bi-bank"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Loksewa Preparation</div>
+              <div class="small text-muted">Section Officer, Nayab Subba, and Kharidar preparation.</div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <div class="gk-stat-icon success" style="width: 40px; height: 40px; font-size: 1.1rem;">
+              <i class="bi bi-book"></i>
+            </div>
+            <div>
+              <div class="fw-bold">School &amp; SEE Education</div>
+              <div class="small text-muted">Foundational conceptual learning for Class 9 and 10 students.</div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <div class="gk-stat-icon accent" style="width: 40px; height: 40px; font-size: 1.1rem;">
+              <i class="bi bi-laptop"></i>
+            </div>
+            <div>
+              <div class="fw-bold">College Education (+2)</div>
+              <div class="small text-muted">Higher secondary science and management subject guidance.</div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3">
+            <div class="gk-stat-icon info" style="width: 40px; height: 40px; font-size: 1.1rem;">
+              <i class="bi bi-people"></i>
+            </div>
+            <div>
+              <div class="fw-bold">Faculty Mentorship</div>
+              <div class="small text-muted">Direct academic counseling and problem resolution sessions.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ABOUT GURUKUL SECTION -->
+<section id="about-gurukul" class="py-5">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">About GURUKUL</h6>
+      <h2 class="fw-bold">Comprehensive Educational Programs</h2>
+      <p class="text-secondary">
+        We bridge the gap between classroom instruction and competitive academic readiness through focused educational tracks.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Loksewa Preparation -->
+      <div class="col-md-6 col-lg-3">
+        <div class="gk-card h-100 p-4 elevated-hover">
+          <div class="gk-stat-icon primary mb-3">
+            <i class="bi bi-bank"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Loksewa Preparation</h4>
+          <p class="text-secondary small mb-0">
+            Tailored curriculum coverage for Civil Service Commission examinations in Nepal, including General Knowledge, Current Affairs, Constitution, and Public Administration with regular practice drills.
+          </p>
+        </div>
+      </div>
+
+      <!-- School Education -->
+      <div class="col-md-6 col-lg-3">
+        <div class="gk-card h-100 p-4 elevated-hover">
+          <div class="gk-stat-icon success mb-3">
+            <i class="bi bi-book"></i>
+          </div>
+          <h4 class="fw-bold mb-2">School Education</h4>
+          <p class="text-secondary small mb-0">
+            Reinforcing core competencies for secondary school learners (Classes 8 through 10) in Compulsory Mathematics, Science, and English to build solid conceptual understanding for SEE board success.
+          </p>
+        </div>
+      </div>
+
+      <!-- College Education -->
+      <div class="col-md-6 col-lg-3">
+        <div class="gk-card h-100 p-4 elevated-hover">
+          <div class="gk-stat-icon accent mb-3">
+            <i class="bi bi-laptop"></i>
+          </div>
+          <h4 class="fw-bold mb-2">College Education</h4>
+          <p class="text-secondary small mb-0">
+            Supporting +2 Science, Management, and Humanities students through deep-dive lectures in Physics, Chemistry, Accountancy, and Economics, alongside university entrance preparation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Mentorship -->
+      <div class="col-md-6 col-lg-3">
+        <div class="gk-card h-100 p-4 elevated-hover">
+          <div class="gk-stat-icon info mb-3">
+            <i class="bi bi-people"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Academic Mentorship</h4>
+          <p class="text-secondary small mb-0">
+            Individualized guidance where mentors evaluate student study strategies, answer writing techniques, time management, and mock interview readiness to build confidence.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. WHAT WE PROVIDE SECTION -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">Our Learning Ecosystem</h6>
+      <h2 class="fw-bold">What We Provide</h2>
+      <p class="text-secondary">
+        Simple, structured, and goal-oriented educational tools crafted for everyday academic development.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      {% for item in what_we_provide %}
+        <div class="col-md-6 col-lg-3">
+          <div class="gk-card h-100 p-4 elevated-hover text-center">
+            <div class="mx-auto gk-stat-icon primary mb-3">
+              <i class="bi {{ item.icon }}"></i>
+            </div>
+            <h5 class="fw-bold mb-2">{{ item.title }}</h5>
+            <p class="text-secondary small mb-0">{{ item.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 4. OUR TEAM SECTION -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">Faculty &amp; Mentors</h6>
+      <h2 class="fw-bold">Our Team</h2>
+      <p class="text-secondary">
+        Dedicated teachers, subject matter experts, and academic mentors guiding learners at every milestone.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      {% for member in team_members %}
+        <div class="col-md-6 col-lg-3">
+          <div class="gk-card h-100 p-4 text-center elevated-hover">
+            <div class="mx-auto mb-3 rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 1.8rem;">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <h5 class="fw-bold mb-1">{{ member.name }}</h5>
+            <div class="text-primary small fw-semibold mb-2">{{ member.position }}</div>
+            <p class="text-secondary small mb-0">{{ member.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 5. COMPLETED WORKS SECTION -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">Academic Initiatives</h6>
+      <h2 class="fw-bold">Completed Works &amp; Activities</h2>
+      <p class="text-secondary">
+        A look at recent educational courses, workshops, and coaching modules organized by GURUKUL.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      {% for work in completed_works %}
+        <div class="col-md-6">
+          <div class="gk-card h-100 p-4 elevated-hover border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="gk-badge gk-badge-primary">{{ work.category }}</span>
+              <span class="small text-muted"><i class="bi bi-check-circle text-success me-1"></i> Completed Activity</span>
+            </div>
+            <h5 class="fw-bold mb-2">{{ work.title }}</h5>
+            <p class="text-secondary small mb-0">{{ work.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 6. CAREER CTA SECTION -->
+<section class="py-5">
+  <div class="container">
+    <div class="gk-card p-4 p-md-5 text-center bg-white border-primary-subtle shadow-sm">
+      <div class="mx-auto mb-3 text-primary" style="font-size: 2.5rem;">
+        <i class="bi bi-briefcase-fill"></i>
+      </div>
+      <h2 class="fw-bold mb-3" style="color: var(--gk-primary);">Join GURUKUL as an Educator or Mentor</h2>
+      <p class="text-secondary max-w-700 mx-auto mb-4" style="font-size: 1.05rem;">
+        Are you passionate about teaching Loksewa aspirants, mentoring school students, or authoring educational curriculum? Explore open faculty roles and submit your profile for review.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'core:career' %}" class="btn btn-primary btn-lg">
+          <i class="bi bi-search"></i> View Available Opportunities
+        </a>
+        <a href="{% url 'core:contact' %}" class="btn btn-secondary btn-lg">
+          <i class="bi bi-envelope"></i> Contact Academic Office
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

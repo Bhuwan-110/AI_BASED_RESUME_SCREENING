@@ -1,0 +1,645 @@
+{% extends 'base.html' %}
+
+{% block title %}UI/UX Design System | GURUKUL AI Resume Screening System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Page Header -->
+  <div class="mb-5 pb-3 border-bottom">
+    <div class="d-flex align-items-center gap-2 text-primary small fw-bold text-uppercase mb-1">
+      <i class="bi bi-palette"></i> Design System Documentation
+    </div>
+    <h1 class="display-6 fw-bold">GURUKUL Reusable UI/UX Component Library</h1>
+    <p class="lead text-secondary mb-0">
+      Design Philosophy: Simple + Professional + Educational + Recruitment-focused. Built with Bootstrap 5 and customized design tokens.
+    </p>
+  </div>
+
+  <!-- Table of Contents Navigation -->
+  <div class="gk-card p-3 mb-5 bg-white">
+    <div class="fw-bold small text-uppercase text-muted mb-2">Jump to Component:</div>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="#colors" class="btn btn-sm btn-secondary">1. Color Palette</a>
+      <a href="#typography" class="btn btn-sm btn-secondary">2. Typography</a>
+      <a href="#buttons" class="btn btn-sm btn-secondary">3. Buttons</a>
+      <a href="#cards" class="btn btn-sm btn-secondary">4. Cards</a>
+      <a href="#forms" class="btn btn-sm btn-secondary">5. Forms & Inputs</a>
+      <a href="#alerts" class="btn btn-sm btn-secondary">6. Alerts & Feedback</a>
+      <a href="#badges" class="btn btn-sm btn-secondary">7. Badges & AI Pills</a>
+      <a href="#tables" class="btn btn-sm btn-secondary">8. Data Tables</a>
+      <a href="#modals" class="btn btn-sm btn-secondary">9. Modals & Dialogs</a>
+      <a href="#loading" class="btn btn-sm btn-secondary">10. Loading States</a>
+      <a href="#empty-states" class="btn btn-sm btn-secondary">11. Empty States</a>
+    </div>
+  </div>
+
+  <!-- 1. COLOR SYSTEM -->
+  <section id="colors" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">01</span>
+      <h3 class="mb-0 fw-bold">Color Tokens</h3>
+    </div>
+    <p class="text-secondary">Consistent palette honoring academic integrity and recruitment clarity.</p>
+
+    <div class="row g-3">
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #1B365D; height: 60px;"></div>
+          <div class="fw-bold">Primary Deep Navy</div>
+          <div class="text-muted small"><code>#1B365D</code> --gk-primary</div>
+          <span class="small text-secondary">Academic authority, branding</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #D97706; height: 60px;"></div>
+          <div class="fw-bold">Academic Gold/Amber</div>
+          <div class="text-muted small"><code>#D97706</code> --gk-accent</div>
+          <span class="small text-secondary">Attention, mentorship, highlights</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #059669; height: 60px;"></div>
+          <div class="fw-bold">Success Emerald</div>
+          <div class="text-muted small"><code>#059669</code> --gk-success</div>
+          <span class="small text-secondary">Shortlisted, high match</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #DC2626; height: 60px;"></div>
+          <div class="fw-bold">Danger Crimson</div>
+          <div class="text-muted small"><code>#DC2626</code> --gk-danger</div>
+          <span class="small text-secondary">Rejected, destructive actions</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #0284C7; height: 60px;"></div>
+          <div class="fw-bold">Info Cerulean</div>
+          <div class="text-muted small"><code>#0284C7</code> --gk-info</div>
+          <span class="small text-secondary">Applied, process notices</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2" style="background-color: #475569; height: 60px;"></div>
+          <div class="fw-bold">Neutral Slate</div>
+          <div class="text-muted small"><code>#475569</code> --gk-secondary</div>
+          <span class="small text-secondary">Secondary text, borders</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2 border" style="background-color: #F8FAFC; height: 60px;"></div>
+          <div class="fw-bold">Surface Background</div>
+          <div class="text-muted small"><code>#F8FAFC</code> --gk-bg-body</div>
+          <span class="small text-secondary">Soft background, reduces glare</span>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="gk-card p-3">
+          <div class="rounded mb-2 border" style="background-color: #EEF4FB; height: 60px;"></div>
+          <div class="fw-bold">Subtle Navy Tint</div>
+          <div class="text-muted small"><code>#EEF4FB</code> --gk-primary-subtle</div>
+          <span class="small text-secondary">Active badges, highlights</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. TYPOGRAPHY -->
+  <section id="typography" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">02</span>
+      <h3 class="mb-0 fw-bold">Typography Scale (Inter)</h3>
+    </div>
+
+    <div class="gk-card p-4">
+      <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-3 text-muted small">Heading 1 (2.15rem / 34px)</div>
+        <div class="col-md-9"><h1 class="mb-0">GURUKUL Candidate Evaluation Portal</h1></div>
+      </div>
+      <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-3 text-muted small">Heading 2 (1.75rem / 28px)</div>
+        <div class="col-md-9"><h2 class="mb-0">Applicant Screening &amp; Verification</h2></div>
+      </div>
+      <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-3 text-muted small">Heading 3 (1.40rem / 22px)</div>
+        <div class="col-md-9"><h3 class="mb-0">Loksewa Subject Matter Experts</h3></div>
+      </div>
+      <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-3 text-muted small">Heading 4 (1.15rem / 18px)</div>
+        <div class="col-md-9"><h4 class="mb-0">Automated Natural Language Parsing</h4></div>
+      </div>
+      <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-3 text-muted small">Paragraph / Body (1rem / 16px)</div>
+        <div class="col-md-9">
+          <p class="mb-0">
+            Resumes uploaded in PDF format are processed via clean text normalization, tokenized, and transformed into vector representations using TF-IDF feature extractions.
+          </p>
+        </div>
+      </div>
+      <div class="row align-items-center py-2">
+        <div class="col-md-3 text-muted small">Small Text / Helper (0.875rem / 14px)</div>
+        <div class="col-md-9 text-muted">
+          Last updated 10 minutes ago by Loksewa Examination Board Admin.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. BUTTONS -->
+  <section id="buttons" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">03</span>
+      <h3 class="mb-0 fw-bold">Buttons &amp; Interactive States</h3>
+    </div>
+    <p class="text-secondary">Clear 150ms transitions, keyboard-accessible focus rings, and explicit semantic variants.</p>
+
+    <div class="gk-card p-4">
+      <div class="mb-4">
+        <h6 class="text-muted fw-bold mb-3">Standard Variants</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary"><i class="bi bi-search"></i> Primary Action</button>
+          <button type="button" class="btn btn-accent"><i class="bi bi-star"></i> Accent / Highlight</button>
+          <button type="button" class="btn btn-outline-primary"><i class="bi bi-download"></i> Outline Primary</button>
+          <button type="button" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Secondary / Cancel</button>
+          <button type="button" class="btn btn-success"><i class="bi bi-check2"></i> Shortlist Candidate</button>
+          <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i> Delete Record</button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h6 class="text-muted fw-bold mb-3">Sizes</h6>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-primary">Small Button</button>
+          <button type="button" class="btn btn-primary">Default Button</button>
+          <button type="button" class="btn btn-lg btn-primary">Large CTA Button</button>
+        </div>
+      </div>
+
+      <div>
+        <h6 class="text-muted fw-bold mb-3">States (Hover / Disabled / Loading)</h6>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <button type="button" class="btn btn-primary" disabled><i class="bi bi-lock"></i> Disabled State</button>
+          <button type="button" class="btn btn-primary" disabled>
+            <span class="gk-loading-spinner me-1" style="border-top-color: #fff; width: 0.9rem; height: 0.9rem;"></span> Processing...
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CARDS -->
+  <section id="cards" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">04</span>
+      <h3 class="mb-0 fw-bold">Cards &amp; Metric Displays</h3>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="gk-card elevated-hover h-100">
+          <div class="gk-card-header">
+            <span>Job Requirement Card</span>
+            <span class="gk-badge gk-badge-primary">Loksewa</span>
+          </div>
+          <div class="gk-card-body">
+            <h5 class="fw-bold">Public Administration Lecturer</h5>
+            <p class="text-muted small">Specialized in Governance, Constitution, and Public Policy for Officer-level candidates.</p>
+            <div class="d-flex justify-content-between small text-muted">
+              <span>Experience: 3+ yrs</span>
+              <span>18 Applicants</span>
+            </div>
+          </div>
+          <div class="gk-card-footer d-flex justify-content-between">
+            <span class="small text-muted">Status: Open</span>
+            <a href="#" class="btn btn-sm btn-primary">Manage</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="gk-stat-card mb-3">
+          <div class="gk-stat-icon primary">
+            <i class="bi bi-file-earmark-check"></i>
+          </div>
+          <div>
+            <div class="gk-stat-value">94.2%</div>
+            <div class="gk-stat-label">Average Match Score</div>
+          </div>
+        </div>
+
+        <div class="gk-stat-card">
+          <div class="gk-stat-icon success">
+            <i class="bi bi-mortarboard"></i>
+          </div>
+          <div>
+            <div class="gk-stat-value">48</div>
+            <div class="gk-stat-label">Verified Instructors</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="gk-card p-4 h-100 border-start border-4 border-primary">
+          <h5 class="fw-bold mb-2">Resume Evaluation Notice</h5>
+          <p class="text-muted small mb-3">
+            TF-IDF vector matching measures token co-occurrence with the official job description. Evaluators must verify pedagogical qualifications directly.
+          </p>
+          <a href="#" class="btn btn-sm btn-outline-primary">Read Scoring Criteria</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. FORMS -->
+  <section id="forms" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">05</span>
+      <h3 class="mb-0 fw-bold">Form Controls &amp; Validation</h3>
+    </div>
+    <p class="text-secondary">Accessible labels, standard error states, and clear input affordances.</p>
+
+    <div class="gk-card p-4">
+      <form onsubmit="return false;">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="sampleFullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="sampleFullName" placeholder="e.g. Ramesh Adhikari" value="Ramesh Adhikari">
+            <div class="form-text">Enter your official name as shown on academic certificates.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="sampleEmail" class="form-label">Email Address <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="sampleEmail" placeholder="candidate@example.com" value="ramesh.adhikari@gmail.com">
+          </div>
+
+          <div class="col-md-6">
+            <label for="sampleRole" class="form-label">Applying For Program</label>
+            <select class="form-select" id="sampleRole">
+              <option selected>Loksewa Preparation (General Knowledge)</option>
+              <option>School Education (Mathematics / Science)</option>
+              <option>+2 Faculty (Physics / Chemistry)</option>
+              <option>Academic Mentorship Track</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="sampleResume" class="form-label">Resume / Curriculum Vitae (PDF only)</label>
+            <input type="file" class="form-control" id="sampleResume" accept=".pdf">
+            <div class="form-text">Maximum size: 5MB. Must be standard readable PDF.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="sampleErrorField" class="form-label">Validation Error Example</label>
+            <input type="text" class="form-control is-invalid" id="sampleErrorField" value="InvalidPhone#123">
+            <div class="invalid-feedback">
+              Please provide a valid 10-digit Nepali mobile number (e.g., 98XXXXXXXX).
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Pedagogical Experience</label>
+            <div class="form-check mt-1">
+              <input class="form-check-input" type="checkbox" id="checkExp" checked>
+              <label class="form-check-label" for="checkExp">
+                Candidate holds prior classroom teaching or Loksewa coaching experience
+              </label>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4 pt-2 border-top d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+            <button type="reset" class="btn btn-secondary">Clear Form</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 6. ALERTS -->
+  <section id="alerts" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">06</span>
+      <h3 class="mb-0 fw-bold">Alerts &amp; User Feedback</h3>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <div class="alert-icon"><i class="bi bi-check-circle-fill"></i></div>
+          <div>
+            <strong>Application Submitted!</strong> Your resume has been uploaded and queued for AI vector scoring.
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <div class="alert-icon"><i class="bi bi-info-circle-fill"></i></div>
+          <div>
+            <strong>System Notice:</strong> 4 new candidate resumes are awaiting administrator review.
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <div class="alert-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <div>
+            <strong>Review Caution:</strong> Candidate resume is missing education history dates.
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <div class="alert-icon"><i class="bi bi-x-circle-fill"></i></div>
+          <div>
+            <strong>File Error:</strong> Only PDF files are supported for automated AI text extraction.
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. BADGES & SCORE PILLS -->
+  <section id="badges" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">07</span>
+      <h3 class="mb-0 fw-bold">Badges &amp; AI Score Indicators</h3>
+    </div>
+
+    <div class="gk-card p-4">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h6 class="text-muted fw-bold mb-3">Recruitment Workflow Statuses</h6>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="gk-badge gk-badge-primary"><i class="bi bi-clock"></i> Applied</span>
+            <span class="gk-badge gk-badge-accent"><i class="bi bi-cpu"></i> Screening In Progress</span>
+            <span class="gk-badge gk-badge-success"><i class="bi bi-check2-circle"></i> Shortlisted</span>
+            <span class="gk-badge gk-badge-danger"><i class="bi bi-x-circle"></i> Rejected</span>
+            <span class="gk-badge gk-badge-neutral"><i class="bi bi-archive"></i> Archived</span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h6 class="text-muted fw-bold mb-3">Specialized AI Match Score Pills</h6>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="gk-score-pill gk-score-high">
+              <i class="bi bi-arrow-up-right-circle-fill"></i> 91.5% High Match
+            </span>
+            <span class="gk-score-pill gk-score-medium">
+              <i class="bi bi-dash-circle-fill"></i> 68.0% Moderate Match
+            </span>
+            <span class="gk-score-pill gk-score-low">
+              <i class="bi bi-arrow-down-right-circle-fill"></i> 34.2% Low Match
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. DATA TABLES -->
+  <section id="tables" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">08</span>
+      <h3 class="mb-0 fw-bold">Candidate Evaluation Table</h3>
+    </div>
+    <p class="text-secondary">Clean tabular structure with ranking order, score visualization, and direct administrative controls.</p>
+
+    <div class="gk-table-wrapper">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 50px;">Rank</th>
+              <th scope="col">Candidate Name</th>
+              <th scope="col">Applied Position</th>
+              <th scope="col">AI Match Score</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold text-primary">#1</td>
+              <td>
+                <div class="fw-semibold">Bikash Sharma</div>
+                <div class="small text-muted">bikash.sharma@example.com</div>
+              </td>
+              <td>Loksewa GK Lead Instructor</td>
+              <td>
+                <span class="gk-score-pill gk-score-high">89.4% Match</span>
+              </td>
+              <td>
+                <span class="gk-badge gk-badge-success">Shortlisted</span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-secondary me-1">
+                  <i class="bi bi-eye"></i> View CV
+                </button>
+                <button type="button" class="btn btn-sm btn-primary">
+                  <i class="bi bi-check-lg"></i> Proceed
+                </button>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="fw-bold text-primary">#2</td>
+              <td>
+                <div class="fw-semibold">Sunita Shrestha</div>
+                <div class="small text-muted">sunita.s@example.com</div>
+              </td>
+              <td>Senior Mathematics Faculty (SEE)</td>
+              <td>
+                <span class="gk-score-pill gk-score-high">82.1% Match</span>
+              </td>
+              <td>
+                <span class="gk-badge gk-badge-accent">Under Review</span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-secondary me-1">
+                  <i class="bi bi-eye"></i> View CV
+                </button>
+                <button type="button" class="btn btn-sm btn-primary">
+                  <i class="bi bi-check-lg"></i> Proceed
+                </button>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="fw-bold text-primary">#3</td>
+              <td>
+                <div class="fw-semibold">Anup Pokharel</div>
+                <div class="small text-muted">anup.p@example.com</div>
+              </td>
+              <td>Curriculum Content Developer</td>
+              <td>
+                <span class="gk-score-pill gk-score-medium">54.0% Match</span>
+              </td>
+              <td>
+                <span class="gk-badge gk-badge-neutral">Pending Admin</span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-secondary me-1">
+                  <i class="bi bi-eye"></i> View CV
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" data-confirm="Are you sure you want to reject candidate Anup Pokharel?">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. MODALS & CONFIRMATION DIALOG -->
+  <section id="modals" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">09</span>
+      <h3 class="mb-0 fw-bold">Modals &amp; Destructive Confirmations</h3>
+    </div>
+    <p class="text-secondary">Mandatory safety confirmations before deleting records or making irreversible recruiter changes.</p>
+
+    <div class="gk-card p-4">
+      <p class="text-muted mb-3">Click below to test standard dialogs adhering to GURUKUL's safe UI rules:</p>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#demoModal">
+          <i class="bi bi-window"></i> Open Standard Modal
+        </button>
+
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+          <i class="bi bi-trash"></i> Trigger Delete Confirmation Modal
+        </button>
+      </div>
+    </div>
+
+    <!-- Demo Modal Standard -->
+    <div class="modal fade" id="demoModal" tabindex="-1" aria-labelledby="demoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="demoModalLabel">AI Evaluation Breakdown</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-secondary mb-3">
+              Detailed TF-IDF similarity vectors extracted against the Loksewa GK Instructor syllabus.
+            </p>
+            <div class="p-3 bg-light rounded border small">
+              <div class="d-flex justify-content-between mb-1">
+                <span>Subject Term Frequency</span>
+                <strong>High (88%)</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-1">
+                <span>Inverse Document Weight</span>
+                <strong>Optimal</strong>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Human Review Status</span>
+                <span class="text-success">Verified</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Download Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger-subtle">
+            <h5 class="modal-title fw-bold text-danger" id="confirmDeleteModalLabel">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i> Confirm Record Removal
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-secondary mb-0">
+              Are you sure you want to remove this job opening and its associated resume submissions? <strong>This action cannot be undone.</strong>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirm Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. LOADING STATES -->
+  <section id="loading" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">10</span>
+      <h3 class="mb-0 fw-bold">Loading States &amp; Shimmer Skeletons</h3>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="gk-card p-4">
+          <h6 class="text-muted fw-bold mb-3">Button &amp; Inline Spinners</h6>
+          <div class="d-flex align-items-center gap-3">
+            <div class="gk-loading-spinner"></div>
+            <span class="text-muted small">Parsing candidate PDF text vectors...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="gk-card p-4">
+          <h6 class="text-muted fw-bold mb-3">Skeleton Loader (Card / Table placeholder)</h6>
+          <div class="gk-skeleton mb-2" style="width: 70%; height: 20px;"></div>
+          <div class="gk-skeleton mb-2" style="width: 90%; height: 14px;"></div>
+          <div class="gk-skeleton" style="width: 40%; height: 14px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. EMPTY STATES -->
+  <section id="empty-states" class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <span class="badge bg-primary">11</span>
+      <h3 class="mb-0 fw-bold">Empty States</h3>
+    </div>
+
+    <div class="gk-empty-state">
+      <div class="gk-empty-state-icon">
+        <i class="bi bi-folder2-open"></i>
+      </div>
+      <div class="gk-empty-state-title">No Candidate Resumes Received Yet</div>
+      <div class="gk-empty-state-text">
+        There are currently no active applications submitted for this Loksewa preparation batch. Once candidates upload their CVs, AI matching scores will be generated automatically.
+      </div>
+      <a href="#openings" class="btn btn-primary">
+        <i class="bi bi-megaphone"></i> Publish Job Listing
+      </a>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

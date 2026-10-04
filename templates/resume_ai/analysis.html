@@ -1,0 +1,476 @@
+{% extends 'base.html' %}
+
+{% block title %}Resume Analysis: {{ application.applicant.get_full_name|default:application.applicant.username }} | GURUKUL Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Admin Subnav -->
+  {% include 'components/admin_subnav.html' with active_admin_tab='applicants' %}
+
+  <!-- Accessible Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb gk-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'accounts:admin_dashboard' %}">Admin</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'applications:admin_applicants' %}">Applicants</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'applications:job_applicants' job.pk %}">{{ job.title|truncatechars:25 }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">AI Analysis: {{ application.applicant.get_full_name|default:application.applicant.username|truncatechars:20 }}</li>
+    </ol>
+  </nav>
+
+  <!-- Top Navigation & Action Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="gk-badge gk-badge-danger">
+          <i class="bi bi-shield-lock-fill"></i> Admin Evaluation
+        </span>
+        <span class="text-muted small">AI-Assisted Candidate Screening</span>
+      </div>
+      <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Resume Analysis Report</h2>
+      <p class="text-secondary small mb-0">
+        Objective decision-support evaluation between vacancy specifications and candidate credentials.
+      </p>
+    </div>
+
+    <!-- Quick Action Bar -->
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> All Applicants
+      </a>
+      {% if application.cv %}
+        <a href="{{ application.cv.url }}" target="_blank" class="btn btn-outline-primary">
+          <i class="bi bi-file-earmark-pdf text-danger me-1"></i> View CV
+        </a>
+      {% endif %}
+      <a href="?re_analyze=true" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-repeat me-1"></i> Analyze Again
+      </a>
+      {% if application.status != 'Shortlisted' %}
+        <form method="POST" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="shortlist">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle-fill me-1"></i> Shortlist
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Mandatory Human Decision Support Guarantee Banner -->
+  <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4" style="background-color: #EBF3FA; border-left: 4px solid var(--gk-primary) !important;">
+    <i class="bi bi-info-circle-fill text-primary fs-3 flex-shrink-0"></i>
+    <div class="small">
+      <strong>Human Recruiter Discretion: Decision Support Only</strong><br>
+      This AI analysis is strictly decision support for the administrator. 
+      <strong>The final hiring and selection decision remains exclusively with the administrator.</strong>
+    </div>
+  </div>
+
+  <!-- Candidate & Job Information Row -->
+  <div class="row g-4 mb-4">
+    <!-- Candidate Information Card -->
+    <div class="col-lg-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
+          <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-person-badge-fill text-primary me-2"></i> Candidate Information
+          </h5>
+          <span class="gk-badge {{ application.status_badge_class }}">
+            {{ application.status }}
+          </span>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Full Name</span>
+            <strong class="text-dark fs-6">{{ application.applicant.get_full_name|default:application.applicant.username }}</strong>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Username</span>
+            <span class="text-dark font-monospace">@{{ application.applicant.username }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Email Address</span>
+            <span class="text-dark">{{ application.applicant.email }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Contact Phone</span>
+            <span class="text-dark">{{ application.applicant.profile.phone|default:"Not provided" }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Application Date</span>
+            <span class="text-dark">{{ application.applied_at|date:"M d, Y, g:i A" }}</span>
+          </div>
+          <div class="col-sm-6">
+            {% if application.cv %}
+              <a href="{{ application.cv.url }}" target="_blank" class="text-primary text-decoration-none small">
+                <i class="bi bi-download me-1"></i> {{ application.cv.name|truncatechars:25 }}
+              </a>
+            {% else %}
+              <span class="text-muted small">No document attached</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Information Card -->
+    <div class="col-lg-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
+          <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-briefcase-fill text-primary me-2"></i> Job Information
+          </h5>
+          <span class="gk-badge gk-badge-primary">
+            {{ job.department }}
+          </span>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <span class="text-muted small d-block">Position Title</span>
+            <strong class="text-dark fs-5">{{ job.title }}</strong>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Location</span>
+            <span class="text-dark">{{ job.location }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Job Type</span>
+            <span class="text-dark">{{ job.job_type }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Application Deadline</span>
+            <span class="text-dark">{{ job.deadline|date:"M d, Y" }}</span>
+          </div>
+          <div class="col-sm-6">
+            <span class="text-muted small d-block">Vacancy Status</span>
+            {% if job.is_active %}
+              <span class="text-success fw-bold">Active</span>
+            {% else %}
+              <span class="text-danger fw-bold">Expired</span>
+            {% endif %}
+          </div>
+          <div class="col-12">
+            <span class="text-muted small d-block">Required Skills Specification</span>
+            <span class="text-secondary small">{{ job.required_skills }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Match Score & Core Telemetry Section -->
+  <div class="gk-card p-4 bg-white shadow-sm mb-4">
+    <div class="row align-items-center g-4">
+      <!-- Circular Progress Match Visualization -->
+      <div class="col-md-4 text-center border-md-end">
+        <span class="fw-bold text-muted text-uppercase small d-block mb-3">Overall Candidate Match</span>
+        <div class="position-relative d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+          <svg viewBox="0 0 36 36" class="w-100 h-100" style="transform: rotate(-90deg);">
+            <!-- Background Ring -->
+            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#E2E8F0"
+                  stroke-width="3.5" />
+            <!-- Foreground Score Ring -->
+            <path stroke-dasharray="{{ analysis.match_percentage }}, 100"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="{% if analysis.match_percentage >= 65 %}#198754{% elif analysis.match_percentage >= 35 %}#0D6EFD{% else %}#DC3545{% endif %}"
+                  stroke-width="3.5"
+                  stroke-linecap="round" />
+          </svg>
+          <div class="position-absolute text-center">
+            <span class="display-6 fw-bold text-dark">{{ analysis.match_percentage }}%</span>
+            <span class="d-block small text-muted text-uppercase" style="font-size: 0.7rem;">Match Fit</span>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <span class="gk-badge {{ analysis.badge_class }} py-2 px-3">
+            {% if analysis.match_percentage >= 65 %}
+              Strong Fit
+            {% elif analysis.match_percentage >= 35 %}
+              Moderate Fit
+            {% else %}
+              Low Fit
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- Match Metric Breakdown -->
+      <div class="col-md-8">
+        <h5 class="fw-bold text-dark mb-2">
+          <i class="bi bi-graph-up-arrow text-primary me-2"></i> Algorithmic Scoring Breakdown
+        </h5>
+        <p class="text-secondary small mb-3">
+          The match score is computed via scikit-learn's TF-IDF Vectorizer and Cosine Similarity, measuring the directional alignment between job requirements and resume text.
+        </p>
+
+        <div class="row g-3">
+          <div class="col-sm-4">
+            <div class="p-3 bg-light rounded-2 border text-center">
+              <span class="text-muted small d-block">Cosine Similarity</span>
+              <strong class="fs-5 text-dark font-monospace">{{ analysis.similarity_score|default:analysis.match_percentage|floatformat:4 }}</strong>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="p-3 bg-light rounded-2 border text-center">
+              <span class="text-muted small d-block">Skills Matched</span>
+              <strong class="fs-5 text-success">{{ matched_skills|length }}</strong>
+              <span class="text-muted small">/ {{ matched_skills|length|add:missing_skills|length }}</span>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="p-3 bg-light rounded-2 border text-center">
+              <span class="text-muted small d-block">Analysis Timestamp</span>
+              <strong class="fs-6 text-dark d-block">{{ analysis.analyzed_at|date:"M d, Y" }}</strong>
+              <span class="text-muted small" style="font-size: 0.75rem;">{{ analysis.analyzed_at|date:"g:i A" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supervised Machine Learning Relevance Classifier (Trained scikit-learn Pipeline) -->
+  <div class="gk-card p-4 bg-white shadow-sm mb-4 border-start border-4 {% if analysis.ml_predicted_class == 'Relevant' %}border-success{% elif analysis.ml_predicted_class == 'Not Relevant' %}border-danger{% else %}border-secondary{% endif %}">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <span class="badge bg-dark text-white text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+            <i class="bi bi-cpu-fill text-warning me-1"></i> Supervised ML Model
+          </span>
+          <span class="text-muted small">scikit-learn Pipeline (TF-IDF + Logistic Regression)</span>
+        </div>
+        <h5 class="fw-bold text-dark mb-0">
+          Resume-Job Relevance Prediction
+        </h5>
+      </div>
+      <div>
+        {% if analysis.ml_prediction_status == 'SUCCESS' and analysis.ml_predicted_class %}
+          <span class="gk-badge {{ analysis.ml_badge_class }} fs-6 px-3 py-2">
+            <i class="bi {% if analysis.ml_predicted_class == 'Relevant' %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %} me-1"></i>
+            {{ analysis.ml_predicted_class }}
+          </span>
+        {% elif analysis.ml_prediction_status == 'NO_MODEL' or not analysis.ml_predicted_class %}
+          <span class="gk-badge gk-badge-neutral fs-6 px-3 py-2">
+            <i class="bi bi-exclamation-circle me-1"></i> Model Not Yet Trained
+          </span>
+        {% else %}
+          <span class="gk-badge gk-badge-warning fs-6 px-3 py-2">
+            <i class="bi bi-question-circle me-1"></i> {{ analysis.ml_prediction_status }}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if analysis.ml_prediction_status == 'SUCCESS' and analysis.ml_predicted_class %}
+      <div class="row g-3 align-items-center mb-3">
+        <div class="col-md-4">
+          <div class="p-3 bg-light rounded-2 border text-center">
+            <span class="text-muted small d-block">Estimated Relevance Probability</span>
+            <strong class="fs-4 text-dark font-monospace">{{ analysis.ml_relevance_percentage }}%</strong>
+            <div class="progress mt-2" style="height: 6px;">
+              <div class="progress-bar {% if analysis.ml_predicted_class == 'Relevant' %}bg-success{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ analysis.ml_relevance_percentage }}%;" aria-valuenow="{{ analysis.ml_relevance_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 bg-light rounded-2 border text-center">
+            <span class="text-muted small d-block">Inference Confidence Tier</span>
+            <strong class="fs-5 text-dark">{{ analysis.ml_confidence_tier|default:"Moderate" }}</strong>
+            <span class="text-muted small d-block" style="font-size: 0.75rem;">Calibrated probability margin</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 bg-light rounded-2 border text-center">
+            <span class="text-muted small d-block">Model Version</span>
+            <strong class="fs-5 text-dark font-monospace">v{{ analysis.ml_model_version|default:"1.0.0" }}</strong>
+            <span class="text-muted small d-block" style="font-size: 0.75rem;">Binary Relevance Classifier</span>
+          </div>
+        </div>
+      </div>
+      <div class="small text-secondary">
+        <i class="bi bi-info-circle me-1"></i>
+        <strong>Architectural Note:</strong> This prediction is generated by a genuine trained Logistic Regression classifier operating on TF-IDF n-gram feature representations with balanced class weighting. Unlike unsupervised cosine similarity, it evaluates learned discriminative signals.
+      </div>
+    {% else %}
+      <div class="p-3 bg-light rounded-2 border small text-muted">
+        <i class="bi bi-info-circle me-1 text-primary"></i>
+        No trained machine learning model was detected at inference time. To train the model with labelled training data, run the Django management command:
+        <code class="d-block mt-2 p-2 bg-dark text-white rounded font-monospace">python manage.py train_resume_model</code>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Rule-Based Explanation Card -->
+  <div class="gk-card p-4 bg-white shadow-sm mb-4 border-start border-4 border-primary">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="bi bi-chat-left-quote-fill text-primary fs-4"></i>
+      <h5 class="fw-bold text-dark mb-0">Analysis Summary &amp; Explanation</h5>
+    </div>
+    <div class="p-3 rounded-2" style="background-color: #F8FAFC; border: 1px solid #E2E8F0;">
+      <p class="mb-0 fs-6 text-dark" style="line-height: 1.7;">
+        {{ analysis.explanation }}
+      </p>
+    </div>
+    <div class="small text-muted mt-2">
+      <i class="bi bi-info-circle me-1"></i> Rule-based summary generated deterministically from actual TF-IDF, skill matching, and credential criteria.
+    </div>
+  </div>
+
+  <!-- Required Skills Matching Section -->
+  <div class="gk-card bg-white shadow-sm mb-4">
+    <div class="gk-card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">
+        <i class="bi bi-check2-square text-primary me-2"></i> Required Skills Evaluation
+      </span>
+      <span class="badge bg-primary">
+        {{ matched_skills|length }} of {{ matched_skills|length|add:missing_skills|length }} Skills Detected
+      </span>
+    </div>
+
+    <div class="p-4">
+      <div class="row g-4">
+        <!-- Matched Skills Column -->
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 border h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-success">
+                <i class="bi bi-check-circle-fill me-1"></i> Matched Skills
+              </span>
+              <span class="badge bg-success">{{ matched_skills|length }}</span>
+            </div>
+            {% if matched_skills %}
+              <div class="d-flex flex-wrap gap-2">
+                {% for skill in matched_skills %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6 rounded-pill">
+                    <i class="bi bi-check-circle-fill me-1"></i> {{ skill }}
+                  </span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="text-muted small mb-0">None of the position's required skills were directly found in the resume.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Missing Skills Column -->
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 border h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold text-warning-emphasis">
+                <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Missing Skills
+              </span>
+              <span class="badge bg-warning text-dark">{{ missing_skills|length }}</span>
+            </div>
+            {% if missing_skills %}
+              <div class="d-flex flex-wrap gap-2">
+                {% for skill in missing_skills %}
+                  <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 fs-6 rounded-pill">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> {{ skill }}
+                  </span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-success small fw-semibold">
+                <i class="bi bi-star-fill text-warning me-1"></i> All required skills were verified in the candidate's CV!
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Qualification & Experience Verification Cards -->
+  <div class="row g-4 mb-4">
+    <!-- Qualification Card -->
+    <div class="col-md-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <span class="fw-bold text-muted text-uppercase small d-block">Academic Qualification Check</span>
+            <h5 class="fw-bold text-dark mb-0">
+              <i class="bi bi-mortarboard-fill text-primary me-1"></i> Qualification Match
+            </h5>
+          </div>
+          <span class="gk-badge {{ analysis.qualification_badge_class }} fs-6 py-2 px-3">
+            {{ analysis.qualification_match }}
+          </span>
+        </div>
+        <div class="p-3 bg-light rounded-2 border small mt-3">
+          <div class="mb-2">
+            <span class="text-muted d-block">Vacancy Requirement:</span>
+            <strong>{{ job.qualification|default:"Not specified" }}</strong>
+          </div>
+          <div>
+            <span class="text-muted d-block">Detection Status:</span>
+            <span class="text-secondary">{{ analysis.qualification_detail|default:"Needs manual verification from official degree transcripts." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Card -->
+    <div class="col-md-6">
+      <div class="gk-card p-4 bg-white shadow-sm h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <span class="fw-bold text-muted text-uppercase small d-block">Work Experience Check</span>
+            <h5 class="fw-bold text-dark mb-0">
+              <i class="bi bi-briefcase-fill text-primary me-1"></i> Experience Match
+            </h5>
+          </div>
+          <span class="gk-badge {{ analysis.experience_badge_class }} fs-6 py-2 px-3">
+            {{ analysis.experience_match }}
+          </span>
+        </div>
+        <div class="p-3 bg-light rounded-2 border small mt-3">
+          <div class="mb-2">
+            <span class="text-muted d-block">Vacancy Requirement:</span>
+            <strong>{{ job.experience|default:"Not specified" }}</strong>
+          </div>
+          <div>
+            <span class="text-muted d-block">Detection Status:</span>
+            <span class="text-secondary">{{ analysis.experience_detail|default:"Needs manual review of employment history." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Administrative Decision & Status Update Section -->
+  <div class="gk-card p-4 bg-white shadow-sm mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold text-dark mb-0">
+        <i class="bi bi-person-check-fill text-primary me-2"></i> Update Candidate Review Status
+      </h5>
+      <span class="small text-muted">Current: <strong>{{ application.status }}</strong></span>
+    </div>
+
+    <form method="POST" class="d-flex flex-wrap align-items-center gap-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_status">
+      <div style="min-width: 250px;">
+        <select name="status" class="form-select">
+          {% for code, label in status_choices %}
+            <option value="{{ code }}" {% if application.status == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check2"></i> Save Status
+      </button>
+      <a href="{% url 'resume_ai:view_extracted_text' application.pk %}" class="btn btn-outline-secondary">
+        <i class="bi bi-cpu me-1"></i> Technical NLP Vector Diagnostic
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}

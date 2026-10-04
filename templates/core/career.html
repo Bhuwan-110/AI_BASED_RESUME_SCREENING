@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Careers at GURUKUL | Faculty &amp; Academic Vacancies{% endblock %}
+{% block meta_description %}Explore open teaching, mentoring, and academic content roles at GURUKUL. View active and expired career positions.{% endblock %}
+
+{% block content %}
+<!-- Career Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-lg-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div class="max-w-700">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-primary-subtle text-primary border border-primary-subtle small fw-semibold">
+          <i class="bi bi-briefcase-fill"></i> Faculty &amp; Staff Recruitment
+        </div>
+        <h1 class="display-6 fw-bold mb-2" style="color: var(--gk-primary);">Academic Career Opportunities</h1>
+        <p class="lead text-secondary mb-0">
+          Join Nepal’s premier digital education platform. Teach Loksewa aspirants, guide secondary students, or author high-standard curricula.
+        </p>
+      </div>
+
+      {% if user.is_authenticated and user.profile.is_admin %}
+        <div>
+          <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-primary">
+            <i class="bi bi-gear-fill"></i> Job Management Panel
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1: ACTIVE JOBS -->
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+      <div>
+        <h3 class="fw-bold mb-0" style="color: var(--gk-primary);">
+          <i class="bi bi-check-circle-fill text-success me-2"></i> ACTIVE JOBS
+        </h3>
+        <span class="text-secondary small">Positions currently accepting candidate resumes &amp; applications</span>
+      </div>
+      <span class="gk-badge gk-badge-success fs-6 py-2 px-3">
+        {{ active_jobs.count }} Open Position{{ active_jobs.count|pluralize }}
+      </span>
+    </div>
+
+    <div class="row g-4">
+      {% for job in active_jobs %}
+        <div class="col-lg-6">
+          <div class="gk-card h-100 d-flex flex-column p-4 elevated-hover border-start border-4 border-primary">
+            <!-- Card Header: Title & Badges -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="gk-badge gk-badge-primary">{{ job.department }}</span>
+              <span class="badge bg-light text-secondary border">{{ job.job_type }}</span>
+            </div>
+
+            <h4 class="fw-bold mb-2">
+              <a href="{% url 'jobs:job_detail' job.pk %}" class="text-dark text-decoration-none">{{ job.title }}</a>
+            </h4>
+
+            <!-- Location & Qualification -->
+            <div class="small text-secondary mb-3 d-flex flex-column gap-1">
+              <div><i class="bi bi-geo-alt text-primary me-1"></i> <strong>Location:</strong> {{ job.location }}</div>
+              <div><i class="bi bi-mortarboard text-primary me-1"></i> <strong>Qualification:</strong> {{ job.qualification }}</div>
+            </div>
+
+            <!-- Skills List Preview -->
+            <div class="mb-3 flex-grow-1">
+              <div class="d-flex flex-wrap gap-1">
+                {% for skill in job.skills_list|slice:":4" %}
+                  <span class="badge bg-light text-dark border">{{ skill }}</span>
+                {% endfor %}
+                {% if job.skills_list|length > 4 %}
+                  <span class="badge bg-light text-muted border">+{{ job.skills_list|length|add:"-4" }} more</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Footer: Deadline, Applicant Count & View Details -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center pt-3 border-top gap-2">
+              <div class="small">
+                <span class="text-muted d-block">
+                  <i class="bi bi-clock-history me-1"></i> Deadline: <strong>{{ job.deadline|date:"M d, Y" }}</strong>
+                </span>
+                <span class="badge bg-light text-secondary border mt-1">
+                  <i class="bi bi-people me-1"></i> {{ job.applicant_count }} Applicant{{ job.applicant_count|pluralize }}
+                </span>
+              </div>
+              <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-primary">
+                View Details <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="gk-empty-state py-5">
+            <div class="gk-empty-state-icon"><i class="bi bi-briefcase"></i></div>
+            <div class="gk-empty-state-title">No Active Openings Right Now</div>
+            <div class="gk-empty-state-text">
+              There are currently no active teaching vacancies open for submissions. Please check back soon or review our expired listings below.
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: EXPIRED JOBS -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+      <div>
+        <h3 class="fw-bold mb-0 text-secondary">
+          <i class="bi bi-hourglass-bottom text-muted me-2"></i> EXPIRED JOBS
+        </h3>
+        <span class="text-secondary small">Past opportunities where the submission deadline has closed. Applications are not permitted.</span>
+      </div>
+      <span class="gk-badge gk-badge-danger fs-6 py-2 px-3">
+        {{ expired_jobs.count }} Closed
+      </span>
+    </div>
+
+    <div class="row g-4">
+      {% for job in expired_jobs %}
+        <div class="col-lg-6">
+          <div class="gk-card h-100 d-flex flex-column p-4 bg-light border" style="opacity: 0.88;">
+            <!-- Card Header: Title & Badges -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="gk-badge gk-badge-neutral">{{ job.department }}</span>
+              <span class="gk-badge gk-badge-danger"><i class="bi bi-lock-fill"></i> EXPIRED</span>
+            </div>
+
+            <h4 class="fw-bold mb-2 text-secondary">
+              <a href="{% url 'jobs:job_detail' job.pk %}" class="text-secondary text-decoration-none">{{ job.title }}</a>
+            </h4>
+
+            <!-- Location & Qualification -->
+            <div class="small text-muted mb-3 d-flex flex-column gap-1">
+              <div><i class="bi bi-geo-alt me-1"></i> <strong>Location:</strong> {{ job.location }}</div>
+              <div><i class="bi bi-mortarboard me-1"></i> <strong>Qualification:</strong> {{ job.qualification }}</div>
+            </div>
+
+            <!-- Footer: Past Deadline, Applicant Count & View Details -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center pt-3 border-top mt-auto gap-2">
+              <div class="small">
+                <span class="text-danger d-block">
+                  <i class="bi bi-calendar-x me-1"></i> Closed on {{ job.deadline|date:"M d, Y" }}
+                </span>
+                <span class="badge bg-secondary-subtle text-secondary border mt-1">
+                  {{ job.applicant_count }} Final Applicants
+                </span>
+              </div>
+              <div>
+                <a href="{% url 'jobs:job_detail' job.pk %}" class="btn btn-sm btn-secondary">
+                  View Details (Closed)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <p class="text-muted text-center py-3 mb-0">No past expired job listings recorded.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Why Teach at GURUKUL -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">Our Culture</h6>
+      <h2 class="fw-bold">Why Teach &amp; Mentor with GURUKUL</h2>
+      <p class="text-secondary">
+        We respect educators and empower faculty with modern online delivery tools and transparent recruitment evaluation.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="gk-card p-4 h-100 bg-white elevated-hover">
+          <div class="gk-stat-icon primary mb-3">
+            <i class="bi bi-people"></i>
+          </div>
+          <h5 class="fw-bold">Nationwide Reach</h5>
+          <p class="text-secondary small mb-0">
+            Guide ambitious students across all seven provinces of Nepal preparing for civil service examinations and secondary school milestones.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="gk-card p-4 h-100 bg-white elevated-hover">
+          <div class="gk-stat-icon success mb-3">
+            <i class="bi bi-laptop"></i>
+          </div>
+          <h5 class="fw-bold">Flexible Formats</h5>
+          <p class="text-secondary small mb-0">
+            Opportunities span full-time, part-time evening sessions, and remote online teaching designed to respect educators' commitments.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="gk-card p-4 h-100 bg-white elevated-hover">
+          <div class="gk-stat-icon accent mb-3">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h5 class="fw-bold">Transparent Recruitment</h5>
+          <p class="text-secondary small mb-0">
+            Every candidate’s qualifications are objectively reviewed using transparent criteria and human academic panels.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recruitment Process Steps -->
+<section class="py-5 bg-white border-top">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <h6 class="text-uppercase text-primary fw-bold">Evaluation Workflow</h6>
+      <h2 class="fw-bold">Four-Stage Recruitment Framework</h2>
+      <p class="text-secondary">Combining objective AI decision support with expert human evaluators.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="gk-card p-4 text-center h-100 bg-white">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold" style="width: 44px; height: 44px;">
+            1
+          </div>
+          <h6 class="fw-bold">Application &amp; CV Upload</h6>
+          <p class="text-secondary small mb-0">Candidate submits resume in PDF format with education and teaching details.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="gk-card p-4 text-center h-100 bg-white">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold" style="width: 44px; height: 44px;">
+            2
+          </div>
+          <h6 class="fw-bold">AI Semantic Screening</h6>
+          <p class="text-secondary small mb-0">Text extraction and TF-IDF cosine similarity calculate advisory match score against role requirements.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="gk-card p-4 text-center h-100 bg-white">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold" style="width: 44px; height: 44px;">
+            3
+          </div>
+          <h6 class="fw-bold">Human Administrator Review</h6>
+          <p class="text-secondary small mb-0">Academic coordinators review candidate profiles and verify pedagogical qualifications.</p>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="gk-card p-4 text-center h-100 bg-white">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold" style="width: 44px; height: 44px;">
+            4
+          </div>
+          <h6 class="fw-bold">Interview &amp; Onboarding</h6>
+          <p class="text-secondary small mb-0">Shortlisted candidates are invited for classroom demonstration and session planning.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

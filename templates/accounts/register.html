@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Register Job Seeker Account | GURUKUL{% endblock %}
+{% block meta_description %}Create your GURUKUL Job Seeker account to apply for faculty and mentorship positions.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm border-top border-4 border-primary">
+        <div class="text-center mb-4">
+          <div class="gk-brand-logo mx-auto mb-3" style="width: 44px; height: 44px; font-size: 1.3rem;">
+            <i class="bi bi-person-plus-fill"></i>
+          </div>
+          <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">Candidate Registration</h2>
+          <p class="text-secondary small mb-0">Create your GURUKUL Job Seeker account</p>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:register' %}" data-loading-form novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 mb-3">
+              {% for error in form.non_field_errors %}
+                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label for="regFullName" class="form-label">Full Name <span class="required-indicator" aria-hidden="true">*</span></label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.full_name.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="regEmail" class="form-label">Email Address <span class="required-indicator" aria-hidden="true">*</span></label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.email.errors %}{{ error }}{% endfor %}
+              </div>
+            {% else %}
+              <div class="form-text">We'll use this email for application status updates.</div>
+            {% endif %}
+          </div>
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="regUsername" class="form-label">Username <span class="required-indicator" aria-hidden="true">*</span></label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.username.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password with Toggle -->
+          <div class="mb-3">
+            <label for="regPassword" class="form-label">Password <span class="required-indicator" aria-hidden="true">*</span></label>
+            <div class="input-group">
+              {{ form.password }}
+              <button class="btn btn-outline-secondary" type="button" data-password-toggle="regPassword" aria-label="Toggle password visibility">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+            </div>
+            {% if form.password.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.password.errors %}{{ error }}{% endfor %}
+              </div>
+            {% else %}
+              <div class="form-text">Must be at least 8 characters long.</div>
+            {% endif %}
+          </div>
+
+          <!-- Confirm Password with Toggle -->
+          <div class="mb-4">
+            <label for="regConfirmPassword" class="form-label">Confirm Password <span class="required-indicator" aria-hidden="true">*</span></label>
+            <div class="input-group">
+              {{ form.confirm_password }}
+              <button class="btn btn-outline-secondary" type="button" data-password-toggle="regConfirmPassword" aria-label="Toggle password visibility">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+            </div>
+            {% if form.confirm_password.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.confirm_password.errors %}{{ error }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="p-3 bg-light rounded-2 border mb-4 small text-secondary">
+            <i class="bi bi-shield-check text-primary me-1"></i>
+            <strong>Default Role:</strong> Public registrations are granted <strong>Job Seeker</strong> privileges by default. Administrator accounts are managed independently by the institution.
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="bi bi-person-check"></i> Register Account
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center pt-3 border-top small text-secondary">
+          Already registered on GURUKUL?
+          <a href="{% url 'accounts:login' %}" class="fw-bold ms-1 text-primary">Log in here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

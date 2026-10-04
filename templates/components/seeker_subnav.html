@@ -1,0 +1,51 @@
+<!-- GURUKUL Job Seeker Navigation Sub-Bar -->
+<div class="gk-seeker-nav mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+  <div class="d-flex flex-wrap align-items-center gap-1">
+    <a href="{% url 'accounts:dashboard' %}" class="gk-seeker-tab {% if active_seeker_tab == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+    <a href="{% url 'core:career' %}" class="gk-seeker-tab {% if active_seeker_tab == 'career' %}active{% endif %}">
+      <i class="bi bi-briefcase"></i> Career
+    </a>
+    <a href="{% url 'applications:my_applications' %}" class="gk-seeker-tab {% if active_seeker_tab == 'applications' %}active{% endif %}">
+      <i class="bi bi-file-earmark-person"></i> My Applications
+    </a>
+    <a href="{% url 'accounts:profile' %}" class="gk-seeker-tab {% if active_seeker_tab == 'profile' %}active{% endif %}">
+      <i class="bi bi-person-gear"></i> Profile
+    </a>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <a href="{% url 'core:career' %}" class="btn btn-sm btn-primary">
+      <i class="bi bi-search me-1"></i> Browse Openings
+    </a>
+    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#seekerLogoutModal">
+      <i class="bi bi-box-arrow-right me-1"></i> Logout
+    </button>
+  </div>
+</div>
+
+<!-- Job Seeker Logout Confirmation Modal -->
+<div class="modal fade" id="seekerLogoutModal" tabindex="-1" aria-labelledby="seekerLogoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-bold text-dark" id="seekerLogoutModalLabel">
+          <i class="bi bi-box-arrow-right text-danger me-2"></i> Confirm Sign Out
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <p class="mb-0 text-secondary">
+          Are you sure you want to sign out of your GURUKUL Job Seeker account? You can return and check your application status at any time.
+        </p>
+      </div>
+      <div class="modal-footer border-top bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="{% url 'accounts:logout' %}" class="btn btn-danger">
+          <i class="bi bi-box-arrow-right me-1"></i> Yes, Sign Out
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

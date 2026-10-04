@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} | Careers at GURUKUL{% endblock %}
+{% block meta_description %}{{ job.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Breadcrumb & Navigation -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'core:career' %}">Careers</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ job.title|truncatechars:35 }}</li>
+      </ol>
+    </nav>
+    <div>
+      {% if is_admin %}
+        <a href="{% url 'applications:job_applicants' job.pk %}" class="btn btn-sm btn-primary me-1">
+          <i class="bi bi-people"></i> Applicants ({{ job.applicant_count }})
+        </a>
+        <a href="{% url 'jobs:manage_jobs' %}" class="btn btn-sm btn-secondary me-1">
+          <i class="bi bi-gear"></i> Manage Jobs
+        </a>
+        <a href="{% url 'jobs:edit_job' job.pk %}" class="btn btn-sm btn-outline-primary me-1">
+          <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'jobs:delete_job' job.pk %}" class="btn btn-sm btn-outline-danger">
+          <i class="bi bi-trash"></i> Delete
+        </a>
+      {% else %}
+        <a href="{% url 'core:career' %}" class="btn btn-sm btn-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Careers
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Main Job Specifications Column -->
+    <div class="col-lg-8">
+      <div class="gk-card p-4 p-md-5 bg-white shadow-sm mb-4">
+        <!-- Title & Badges -->
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+          <div>
+            <span class="gk-badge gk-badge-primary mb-2">{{ job.department }}</span>
+            <h2 class="fw-bold mb-1" style="color: var(--gk-primary);">{{ job.title }}</h2>
+          </div>
+          <div>
+            {% if job.is_active %}
+              <span class="gk-badge gk-badge-success fs-6 py-2 px-3">
+                <i class="bi bi-check-circle-fill"></i> ACTIVE
+              </span>
+            {% else %}
+              <span class="gk-badge gk-badge-danger fs-6 py-2 px-3">
+                <i class="bi bi-x-circle-fill"></i> EXPIRED
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Quick Summary Ribbon -->
+        <div class="row g-3 p-3 bg-light rounded-2 border my-3">
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Job Type</div>
+            <div class="fw-semibold text-dark">{{ job.job_type }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Location</div>
+            <div class="fw-semibold text-dark">{{ job.location }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Deadline</div>
+            <div class="fw-semibold {% if job.is_expired %}text-danger{% else %}text-primary{% endif %}">
+              {{ job.deadline|date:"M d, Y" }}
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Applicants</div>
+            <div class="fw-semibold text-dark">{{ job.applicant_count }} Submitted</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Role Overview &amp; Duties</h5>
+          <div class="text-secondary" style="white-space: pre-line; line-height: 1.7;">
+            {{ job.description }}
+          </div>
+        </div>
+
+        <!-- Required Skills & Competencies -->
+        <div class="mb-4">
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Target Competencies &amp; Skills</h5>
+          <p class="text-secondary small mb-2">
+            These skills form the primary keyword dictionary utilized by our TF-IDF resume screening algorithm:
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            {% for skill in job.skills_list %}
+              <span class="gk-badge gk-badge-primary fs-6 py-1 px-3">
+                <i class="bi bi-tag-fill me-1"></i> {{ skill }}
+              </span>
+            {% empty %}
+              <span class="text-muted small">No specific skill keywords listed.</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Qualifications & Experience -->
+        <div class="mb-4">
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Eligibility Requirements</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded border h-100">
+                <div class="fw-bold text-dark mb-1"><i class="bi bi-mortarboard text-primary me-2"></i> Qualification</div>
+                <div class="text-secondary small">{{ job.qualification }}</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded border h-100">
+                <div class="fw-bold text-dark mb-1"><i class="bi bi-clock-history text-primary me-2"></i> Experience</div>
+                <div class="text-secondary small">{{ job.experience }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Application CTA / Expired Notice -->
+        <div class="pt-4 border-top">
+          {% if job.is_expired %}
+            <div class="alert alert-danger mb-0" role="alert">
+              <div class="alert-icon"><i class="bi bi-lock-fill"></i></div>
+              <div>
+                <h5 class="fw-bold mb-1">Application Closed</h5>
+                The application deadline for this position passed on <strong>{{ job.deadline|date:"F d, Y" }}</strong>. New resume submissions are no longer accepted for this vacancy.
+              </div>
+            </div>
+          {% else %}
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 p-4 bg-light rounded-3 border border-primary-subtle">
+              <div>
+                <h6 class="fw-bold mb-1 text-primary">Ready to Submit Your Application?</h6>
+                <div class="text-secondary small">Upload your resume in PDF format (maximum 5MB) for review.</div>
+              </div>
+              <div>
+                {% if user.is_authenticated %}
+                  {% if has_applied %}
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="gk-badge {{ user_application.status_badge_class }} py-2 px-3">
+                        <i class="bi bi-check2-all"></i> Already Applied ({{ user_application.status }})
+                      </span>
+                      <a href="{% url 'applications:view_application' user_application.pk %}" class="btn btn-outline-primary">
+                        View Submission
+                      </a>
+                    </div>
+                  {% else %}
+                    <a href="{% url 'applications:apply_job' job.pk %}" class="btn btn-primary btn-lg">
+                      <i class="bi bi-send-check"></i> Apply Now
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a href="{% url 'accounts:login' %}?next={% url 'applications:apply_job' job.pk %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Login to Apply Now
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Info Column -->
+    <div class="col-lg-4">
+      <!-- Institutional Standard Card -->
+      <div class="gk-card p-4 bg-white shadow-sm mb-4">
+        <h6 class="fw-bold mb-3 text-uppercase text-muted" style="letter-spacing: 0.05em;">Hiring Information</h6>
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small text-secondary">
+          <li class="d-flex align-items-start gap-2">
+            <i class="bi bi-building text-primary mt-1"></i>
+            <div>
+              <span class="fw-bold text-dark d-block">Institution</span>
+              GURUKUL Online Learning
+            </div>
+          </li>
+          <li class="d-flex align-items-start gap-2">
+            <i class="bi bi-calendar-event text-primary mt-1"></i>
+            <div>
+              <span class="fw-bold text-dark d-block">Posted On</span>
+              {{ job.created_at|date:"F d, Y" }}
+            </div>
+          </li>
+          <li class="d-flex align-items-start gap-2">
+            <i class="bi bi-hourglass-split text-primary mt-1"></i>
+            <div>
+              <span class="fw-bold text-dark d-block">Application Status</span>
+              {% if job.is_active %}
+                <span class="text-success fw-bold">Accepting Candidates</span>
+              {% else %}
+                <span class="text-danger fw-bold">Applications Expired</span>
+              {% endif %}
+            </div>
+          </li>
+          <li class="d-flex align-items-start gap-2">
+            <i class="bi bi-geo-alt text-primary mt-1"></i>
+            <div>
+              <span class="fw-bold text-dark d-block">Interview Center</span>
+              Putalisadak, Kathmandu / Online
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- AI Decision Support Disclaimer -->
+      <div class="p-3 bg-light rounded-2 border small text-secondary">
+        <div class="fw-bold text-dark mb-1">
+          <i class="bi bi-shield-check text-primary me-1"></i> Evaluation Standard
+        </div>
+        Our TF-IDF AI screening compares candidate resumes against the competencies listed above to provide transparent ranking. Final candidate selection is conducted by human faculty panels.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
