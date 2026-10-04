@@ -120,8 +120,17 @@ def career(request):
     """
     Public Career Page for GURUKUL.
     Displays ACTIVE JOBS and EXPIRED JOBS dynamically queried from the database.
+    Auto-seeds vacancies if no active openings exist (e.g. on fresh Render deployment).
     """
     today = timezone.now().date()
+    import sys
+    if 'test' not in sys.argv and not Job.objects.filter(deadline__gte=today).exists():
+        try:
+            from populate_all_jobs_and_applicants import seed_database
+            seed_database()
+        except Exception:
+            pass
+
     active_jobs = Job.objects.filter(deadline__gte=today).order_by('deadline')
     expired_jobs = Job.objects.filter(deadline__lt=today).order_by('-deadline')
 
